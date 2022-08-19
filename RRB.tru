@@ -1,0 +1,7 @@
+unit RRB;
+
+var const GOTOX : byte = $10;
+	const TRANSPARENT : byte = $80;
+
+
+end.

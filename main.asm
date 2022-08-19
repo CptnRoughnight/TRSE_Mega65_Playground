@@ -24,7 +24,7 @@ endd_s:
 	; Ending memory block at $2001
 	; Resuming memory block at $2001
 HelloWorld:
-	; LineNumber: 59
+	; LineNumber: 131
 	jmp block1
 	; LineNumber: 23
 DMA_dmalist:	.res	20,0
@@ -37,112 +37,20 @@ mega65_screenB:	.byte	0
 	; LineNumber: 10
 mega65_screenaddr:	.word	0
 	; LineNumber: 5
-palettes_p	= $02
+Memory_zpLo	= $90
+	; LineNumber: 6
+Memory_zpHi	= $92
 	; LineNumber: 7
-palettes_redvalues:	.byte $00, $011, $022, $033, $044, $055, $066, $077
-	.byte $088, $099, $0aa, $0bb, $0cc, $0dd, $0ee, $0ff
-	.byte $00, $0f3, $00, $0fb, $018, $00, $0f3, $00
-	.byte $0f, $0f7, $0fb, $05f, $0df, $0ff, $0ff, $0ff
-	.byte $0fb, $0f7, $055, $0f7, $0fb, $0ff, $0ff, $0ff
-	.byte $0ff, $0fb, $0f7, $00, $0f3, $00, $0fa, $00
-	.byte $00, $0b4, $0cb, $0bc, $06a, $0e7, $0e6, $0e7
-	.byte $0a, $0c, $0d, $01e, $0be, $05f, $06f, $05f
-	.byte $0f7, $075, $037, $0e8, $0ba, $07c, $03e, $08f
-	.byte $03e, $04c, $0f8, $037, $0b3, $014, $037, $0f8
-	.byte $02a, $05b, $07c, $0ad, $0de, $07c, $0ba, $0e8
-	.byte $037, $085, $064, $091, $032, $0b3, $05, $0b3
-	.byte $075, $037, $046, $0f8, $02a, $01e, $04b, $0ba
-	.byte $078, $05, $0f, $0e1, $032, $0b3, $046, $0f8
-	.byte $0ba, $07c, $0eb, $0ba, $08a, $0f8, $075, $075
-	.byte $0b3, $0f, $0f1, $0b3, $094, $075, $037, $067
-	.byte $0f8, $0ba, $0d, $03e, $0ba, $0f8, $037, $075
-	.byte $0c3, $064, $027, $0f8, $0ba, $0ba, $0be, $0ff
-	.byte $03e, $01e, $07d, $07c, $08c, $03c, $0b4, $023
-	.byte $082, $04, $026, $05a, $0ad, $05d, $0ff, $05f
-	.byte $0ff, $06f, $0ff, $07d, $0ad, $04b, $0a, $0f5
-	.byte $035, $026, $0c8, $0ca, $01b, $06e, $0ff, $0ff
-	.byte $08c, $0b9, $069, $037, $0a6, $0c3, $082, $02
-	.byte $0c, $041, $0a, $041, $0d7, $0b4, $00, $05
-	.byte $0c1, $021, $021, $06, $00, $0d2, $0c3, $0a6
-	.byte $019, $055, $0d7, $08, $01, $05, $061, $0f
-	.byte $00, $023, $00, $081, $032, $096, $0a4, $09
-	.byte $0a5, $0eb, $087, $0a4, $026, $0c3, $01, $00
-	.byte $032, $0c, $05, $06, $078, $0c9, $0db, $09b
-	.byte $07d, $07d, $08f, $06e, $0ff, $0ad, $0db, $0db
-	.byte $0c8, $0a5, $046, $014, $023, $055, $0a, $08c
-	.byte $0ff, $0ff, $0af, $0cf, $06e, $0db, $089, $019
-	; LineNumber: 9
-palettes_greenvalues:	.byte $00, $011, $022, $033, $044, $055, $066, $077
-	.byte $088, $099, $0aa, $0bb, $0cc, $0dd, $0ee, $0ff
-	.byte $0f7, $0fb, $0ff, $0ff, $018, $00, $0f3, $00
-	.byte $0f, $00, $0f3, $00, $018, $0c, $018, $00
-	.byte $0f3, $00, $041, $0f3, $0f7, $0f7, $0fb, $0ff
-	.byte $0ff, $0fb, $0f7, $0f7, $0fb, $0ff, $0ff, $0fb
-	.byte $0f7, $0d7, $0fa, $0aa, $0a, $049, $028, $0e6
-	.byte $096, $087, $0a8, $0b9, $0aa, $09b, $08c, $01e
-	.byte $00, $0b3, $014, $055, $037, $0f8, $0ba, $02d
-	.byte $07c, $0e9, $037, $075, $0d2, $014, $037, $0f8
-	.byte $02a, $05b, $07c, $0ad, $0de, $03e, $07c, $0eb
-	.byte $0f8, $0d7, $05, $0e1, $05, $075, $046, $037
-	.byte $0f8, $0ba, $0c, $07c, $08d, $08f, $0ee, $03e
-	.byte $04b, $0d7, $096, $0d2, $014, $037, $0ba, $07c
-	.byte $03e, $01f, $02d, $07c, $09b, $0ba, $0f8, $037
-	.byte $075, $091, $0f1, $0b3, $094, $075, $0e6, $067
-	.byte $0f8, $0ba, $0ad, $03e, $0f8, $075, $075, $0b3
-	.byte $032, $023, $04, $075, $075, $037, $0ca, $0cd
-	.byte $07c, $09b, $0a, $0f8, $0d7, $0a5, $082, $061
-	.byte $0a, $081, $081, $041, $02, $025, $0c3, $0a5
-	.byte $026, $0db, $05a, $0b9, $0e6, $0a5, $0b4, $023
-	.byte $05, $026, $08, $049, $01b, $05d, $05d, $0ae
-	.byte $0ff, $0f, $0cd, $08c, $08a, $0e6, $043, $064
-	.byte $0c5, $069, $07d, $06e, $0ff, $0f, $05c, $04b
-	.byte $0c8, $083, $089, $04c, $0ed, $0be, $0ef, $0ff
-	.byte $0be, $06e, $07d, $0ed, $0c9, $0a5, $0c2, $073
-	.byte $0a4, $046, $025, $0a6, $087, $0d9, $04a, $0b
-	.byte $05c, $09b, $0e6, $0a5, $014, $0c3, $0c1, $01
-	.byte $01, $012, $01, $01, $023, $014, $026, $019
-	.byte $05a, $03c, $06c, $037, $025, $02, $092, $01
-	.byte $041, $081, $041, $00, $0a, $091, $091, $00
-	.byte $05, $0a6, $0a, $0a3, $0e1, $01, $043, $041
-	; LineNumber: 11
-palettes_bluevalues:	.byte $00, $011, $022, $033, $044, $055, $066, $077
-	.byte $088, $099, $0aa, $0bb, $0cc, $0dd, $0ee, $0ff
-	.byte $0f7, $0fb, $0ff, $0ff, $0ff, $0ff, $0fb, $0f7
-	.byte $05, $0f7, $0fb, $05f, $0ff, $0bc, $018, $00
-	.byte $0f3, $00, $041, $00, $0f3, $00, $018, $0fb
-	.byte $00, $0f3, $00, $00, $0f3, $00, $0fa, $0ff
-	.byte $0ff, $08c, $0c, $098, $09, $049, $078, $06
-	.byte $0f5, $027, $047, $0d7, $0c8, $0b9, $0fa, $02d
-	.byte $0ff, $0b3, $0c3, $055, $037, $0f8, $0ba, $0ad
-	.byte $0ba, $037, $075, $0b3, $0f1, $032, $0b3, $075
-	.byte $055, $027, $0f8, $0ba, $07c, $0ba, $0f8, $055
-	.byte $075, $0e3, $023, $0f, $073, $0b3, $05, $094
-	.byte $075, $037, $028, $0f8, $02a, $0af, $0ac, $05c
-	.byte $0e8, $0f5, $064, $032, $064, $037, $0ba, $07c
-	.byte $03e, $01f, $0f, $03e, $0cd, $07c, $07c, $0f8
-	.byte $037, $0d2, $0b3, $075, $037, $0f8, $0aa, $0ac
-	.byte $07c, $03e, $08f, $0ff, $07c, $07c, $0f8, $037
-	.byte $0c3, $064, $027, $0f8, $0ba, $0ba, $01e, $05f
-	.byte $03e, $02d, $0eb, $09b, $0a, $019, $073, $032
-	.byte $0e1, $011, $00, $0a, $01, $0a4, $0a, $023
-	.byte $026, $013, $0c3, $0f, $0a, $00, $05, $041
-	.byte $0a, $00, $0a5, $00, $0a, $0a5, $01, $0a4
-	.byte $014, $064, $091, $05, $05, $041, $05, $08
-	.byte $0c, $05, $0a, $0a, $037, $0a5, $041, $05
-	.byte $0e4, $023, $08, $019, $0a6, $08a, $05a, $0dc
-	.byte $0ff, $0ff, $0f, $05d, $0ed, $0c5, $025, $0d7
-	.byte $0c9, $069, $06f, $0db, $0cd, $03c, $0ff, $0ff
-	.byte $0ff, $0af, $0f, $0ff, $06f, $05f, $0ad, $0db
-	.byte $049, $084, $0b, $0d, $02d, $0ff, $0ff, $0ff
-	.byte $0ff, $0af, $0cf, $0ff, $0ff, $0e, $0ff, $05c
-	.byte $0eb, $0b7, $046, $026, $064, $073, $028, $087
-	.byte $0fb, $05c, $09b, $0c8, $087, $093, $0d4, $073
+Memory_pa:	.byte	0
 	; LineNumber: 7
-blah:	.byte	$01
-	; LineNumber: 10
-varPrefixed_x:	.word	0
-	; LineNumber: 11
-addr:	.word	0
+Memory_pb:	.byte	0
+	; LineNumber: 16
+sprAddr = $3000
+	; LineNumber: 17
+sprPos:	.word $0a, $0c8, $01e, $042, $046, $078, $02, $05a
+	.word $037, $0fa, $0a, $0c8, $01e, $042, $046, $078
+	.word $02, $05a, $037, $0fa, $0a, $0c8, $01e, $042
+	.word $046
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : init16x8div
 	;    Procedure type : Built-in function
@@ -614,9 +522,9 @@ end_procedure_DMA_lfill:
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : mega65_setFCM
 	;    Procedure type : User-defined procedure
-	; LineNumber: 17
-mega65_setFCM:
 	; LineNumber: 18
+mega65_setFCM:
+	; LineNumber: 19
 	; ****** Inline assembler section
 		sei
 		lda #$35
@@ -667,33 +575,33 @@ mega65_setFCM:
 		sta $d021
 		
 	
-	; LineNumber: 68
+	; LineNumber: 69
 	rts
 end_procedure_mega65_setFCM:
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : mega65_relocateScreen
 	;    Procedure type : User-defined procedure
+	; LineNumber: 73
 	; LineNumber: 72
+mega65_p	= $02
 	; LineNumber: 71
-mega65_p	= $04
-	; LineNumber: 70
 mega65_b:	.byte	0
-	; LineNumber: 70
+	; LineNumber: 71
 mega65_addr:	.word	0
 mega65_relocateScreen_block11:
 mega65_relocateScreen:
-	; LineNumber: 73
+	; LineNumber: 74
 	lda mega65_b
 	; Calling storevariable on generic assign expression
 	sta mega65_screenB
-	; LineNumber: 74
+	; LineNumber: 75
 	; integer assignment NodeVar
 	ldy mega65_addr+1 ; keep
 	lda mega65_addr
 	; Calling storevariable on generic assign expression
 	sta mega65_screenaddr
 	sty mega65_screenaddr+1
-	; LineNumber: 75
+	; LineNumber: 76
 	; Poke
 	; Optimization: shift is zero
 	; integer assignment NodeVar
@@ -727,7 +635,7 @@ mega65_relocateScreen_tempVarShift_var12 = $54
 
 	lda mega65_relocateScreen_tempVarShift_var12
 	sta $d061
-	; LineNumber: 76
+	; LineNumber: 77
 	; Poke
 	; Optimization: shift is zero
 	; HandleVarBinopB16bit
@@ -744,20 +652,20 @@ mega65_relocateScreen_tempVarShift_var12 = $54
 	tay 
 	pla 
 	sta $d060
-	; LineNumber: 77
+	; LineNumber: 78
 	; Poke
 	; Optimization: shift is zero
 	lda mega65_b
 	sta $d062
-	; LineNumber: 78
+	; LineNumber: 79
 	rts
 end_procedure_mega65_relocateScreen:
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : mega65_SetRowSize
 	;    Procedure type : User-defined procedure
-	; LineNumber: 81
-mega65_SetRowSize:
 	; LineNumber: 82
+mega65_SetRowSize:
+	; LineNumber: 83
 	; Right is PURE NUMERIC : Is word =1
 	; 16 bit mul or div
 	; Mul 16x8 setup
@@ -771,12 +679,12 @@ mega65_SetRowSize:
 	; Calling storevariable on generic assign expression
 	sta mega65_LogicalRowSize
 	sty mega65_LogicalRowSize+1
-	; LineNumber: 83
+	; LineNumber: 84
 	; Poke
 	; Optimization: shift is zero
 	lda mega65_RowSize
 	sta $d05e
-	; LineNumber: 84
+	; LineNumber: 85
 	; Poke
 	; Optimization: shift is zero
 	; integer assignment NodeVar
@@ -812,7 +720,7 @@ mega65_SetRowSize_tempVarShift_var15 = $54
 
 	lda mega65_SetRowSize_tempVarShift_var15
 	sta $d059
-	; LineNumber: 85
+	; LineNumber: 86
 	; Poke
 	; Optimization: shift is zero
 	; HandleVarBinopB16bit
@@ -829,327 +737,80 @@ mega65_SetRowSize_tempVarShift_var15 = $54
 	tay 
 	pla 
 	sta $d058
-	; LineNumber: 86
+	; LineNumber: 87
 	rts
 end_procedure_mega65_SetRowSize:
-	
-; // Aurora Palette
 	; NodeProcedureDecl -1
-	; ***********  Defining procedure : palettes_InitPalette
+	; ***********  Defining procedure : mega65_printCharFCM
 	;    Procedure type : User-defined procedure
-	; LineNumber: 17
-	; LineNumber: 15
-palettes_i:	.byte	0
-palettes_InitPalette_block17:
-palettes_InitPalette:
-	; LineNumber: 27
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta palettes_i
-palettes_InitPalette_forloop18:
-	; LineNumber: 19
-	; LineNumber: 20
+	; LineNumber: 91
+	; LineNumber: 90
+mega65_a:	.word	0
+	; LineNumber: 89
+mega65_ch:	.byte	0
+	; LineNumber: 89
+mega65_color:	.byte	0
+	; LineNumber: 89
+mega65_x:	.word	0
+	; LineNumber: 89
+mega65_y:	.word	0
+mega65_printCharFCM_block17:
+mega65_printCharFCM:
+	; LineNumber: 92
 	; Generic 16 bit op
-	ldy #0
-	lda palettes_i
-palettes_InitPalette_rightvarInteger_var36 = $54
-	sta palettes_InitPalette_rightvarInteger_var36
-	sty palettes_InitPalette_rightvarInteger_var36+1
-	; Integer constant assigning
-	ldy #$d1
-	lda #$00
-	; Low bit binop:
-	clc
-	adc palettes_InitPalette_rightvarInteger_var36
-palettes_InitPalette_wordAdd34:
-	sta palettes_InitPalette_rightvarInteger_var36
-	; High-bit binop
-	tya
-	adc palettes_InitPalette_rightvarInteger_var36+1
-	tay
-	lda palettes_InitPalette_rightvarInteger_var36
-	sta palettes_p
-	sty palettes_p+1
-	; LineNumber: 21
-	; Load Byte array
-	ldx palettes_i
-	lda palettes_redvalues,x
-	; Calling storevariable on generic assign expression
-	; Storing to a pointer
-	ldy #$0
-	sta (palettes_p),y
-	; LineNumber: 22
-	; Generic 16 bit op
-	ldy #0
-	lda palettes_i
-palettes_InitPalette_rightvarInteger_var39 = $54
-	sta palettes_InitPalette_rightvarInteger_var39
-	sty palettes_InitPalette_rightvarInteger_var39+1
-	; Integer constant assigning
-	ldy #$d2
-	lda #$00
-	; Low bit binop:
-	clc
-	adc palettes_InitPalette_rightvarInteger_var39
-palettes_InitPalette_wordAdd37:
-	sta palettes_InitPalette_rightvarInteger_var39
-	; High-bit binop
-	tya
-	adc palettes_InitPalette_rightvarInteger_var39+1
-	tay
-	lda palettes_InitPalette_rightvarInteger_var39
-	sta palettes_p
-	sty palettes_p+1
-	; LineNumber: 23
-	; Load Byte array
-	ldx palettes_i
-	lda palettes_greenvalues,x
-	; Calling storevariable on generic assign expression
-	; Storing to a pointer
-	ldy #$0
-	sta (palettes_p),y
-	; LineNumber: 24
-	; Generic 16 bit op
-	ldy #0
-	lda palettes_i
-palettes_InitPalette_rightvarInteger_var42 = $54
-	sta palettes_InitPalette_rightvarInteger_var42
-	sty palettes_InitPalette_rightvarInteger_var42+1
-	; Integer constant assigning
-	ldy #$d3
-	lda #$00
-	; Low bit binop:
-	clc
-	adc palettes_InitPalette_rightvarInteger_var42
-palettes_InitPalette_wordAdd40:
-	sta palettes_InitPalette_rightvarInteger_var42
-	; High-bit binop
-	tya
-	adc palettes_InitPalette_rightvarInteger_var42+1
-	tay
-	lda palettes_InitPalette_rightvarInteger_var42
-	sta palettes_p
-	sty palettes_p+1
-	; LineNumber: 25
-	; Load Byte array
-	ldx palettes_i
-	lda palettes_bluevalues,x
-	; Calling storevariable on generic assign expression
-	; Storing to a pointer
-	ldy #$0
-	sta (palettes_p),y
-	; LineNumber: 26
-palettes_InitPalette_forloopcounter20:
-palettes_InitPalette_loopstart21:
-	; Test Inc dec D
-	inc palettes_i
-	lda #$ff
-	cmp palettes_i ;keep
-	beq palettes_InitPalette_loopdone43
-palettes_InitPalette_loopnotdone44:
-	jmp palettes_InitPalette_forloop18
-palettes_InitPalette_loopdone43:
-palettes_InitPalette_forloopend19:
-palettes_InitPalette_loopend22:
-	; LineNumber: 27
-	rts
-end_procedure_palettes_InitPalette:
-	; NodeProcedureDecl -1
-	; ***********  Defining procedure : waitKey
-	;    Procedure type : User-defined procedure
-	; LineNumber: 16
-waitKey:
-	; LineNumber: 17
-	; ****** Inline assembler section
-	waitforkey:
-		lda $D610
-		beq waitforkey
-	
-	; LineNumber: 22
-	rts
-end_procedure_waitKey:
-	
-; // set tiles 2048 to 256 colors 
-	; NodeProcedureDecl -1
-	; ***********  Defining procedure : initTiles
-	;    Procedure type : User-defined procedure
-	; LineNumber: 28
-	; LineNumber: 26
-col:	.byte	0
-	; LineNumber: 27
-addr1:	.word	0
-initTiles_block46:
-initTiles:
-	; LineNumber: 29
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta addr1
-	sty addr1+1
-	; LineNumber: 30
-	; Calling storevariable on generic assign expression
-	sta col
-	; LineNumber: 36
-	; Calling storevariable on generic assign expression
-	sta varPrefixed_x
-	sty varPrefixed_x+1
-initTiles_forloop47:
-	; LineNumber: 32
-	; LineNumber: 33
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta DMA_dmb1
-	lda #$2
-	; Calling storevariable on generic assign expression
-	sta DMA_db1
-	; integer assignment NodeVar
-	ldy addr1+1 ; keep
-	lda addr1
-	; Calling storevariable on generic assign expression
-	sta DMA_daddr1
-	sty DMA_daddr1+1
-	lda col
-	; Calling storevariable on generic assign expression
-	sta DMA_value1
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$40
-	; Calling storevariable on generic assign expression
-	sta DMA_count2
-	sty DMA_count2+1
-	jsr DMA_lfill
-	; LineNumber: 34
-	; Test Inc dec D
-	inc col
-	; LineNumber: 35
-	lda addr1
-	clc
-	adc #$40
-	sta addr1+0
-	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
-	bcc initTiles_WordAdd55
-	inc addr1+1
-initTiles_WordAdd55:
-	; LineNumber: 36
-initTiles_forloopcounter49:
-initTiles_loopstart50:
-	; Compare is onpage
-	lda varPrefixed_x
-	clc
-	adc #$01
-	sta varPrefixed_x+0
-	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
-	bcc initTiles_WordAdd57
-	inc varPrefixed_x+1
-initTiles_WordAdd57:
-	; Executing integer comparison #$ff
-	; Binary clause INTEGER: NOTEQUALS
-	; Compare INTEGER with pure num / var optimization. GREATER. 
-	lda varPrefixed_x+1   ; compare high bytes
-	cmp #$00 ;keep
-	beq initTiles_pass163
-	jmp initTiles_ConditionalTrueBlock59
-initTiles_pass163:
-	lda varPrefixed_x
-	cmp #$ff ;keep
-	beq initTiles_elsedoneblock61
-	jmp initTiles_ConditionalTrueBlock59
-initTiles_ConditionalTrueBlock59: ;Main true block ;keep:
-	; LineNumber: 30
-	; LineNumber: 31
-	; ****** Inline assembler section
-  jmp initTiles_forloop47
-initTiles_elsedoneblock61:
-initTiles_loopdone56: ;keep:
-initTiles_forloopend48:
-initTiles_loopend51:
-	; LineNumber: 37
-	rts
-end_procedure_initTiles:
-	; NodeProcedureDecl -1
-	; ***********  Defining procedure : demoDrawTiles
-	;    Procedure type : User-defined procedure
-	; LineNumber: 42
-	; LineNumber: 40
-t:	.word	0
-	; LineNumber: 41
-x1:	.byte	0
-	; LineNumber: 41
-y1:	.byte	0
-demoDrawTiles_block65:
-demoDrawTiles:
-	; LineNumber: 43
-	; Integer constant assigning
-	ldy #$08
-	lda #$00
-	; Calling storevariable on generic assign expression
-	sta t
-	sty t+1
-	; LineNumber: 57
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta y1
-demoDrawTiles_forloop66:
-	; LineNumber: 45
-	; LineNumber: 56
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta x1
-demoDrawTiles_forloop110:
-	; LineNumber: 47
-	; LineNumber: 49
-	; Generic 16 bit op
-	ldy #0
 	; Mul 16x8 setup
-	lda y1
+	ldy mega65_y+1
+	lda mega65_y
 	sta mul16x8_num1
 	sty mul16x8_num1Hi
 	ldy mega65_LogicalRowSize+1
 	lda mega65_LogicalRowSize
 	sta mul16x8_num2
 	jsr mul16x8_procedure
-demoDrawTiles_rightvarInteger_var133 = $54
-	sta demoDrawTiles_rightvarInteger_var133
-	sty demoDrawTiles_rightvarInteger_var133+1
+mega65_printCharFCM_rightvarInteger_var20 = $54
+	sta mega65_printCharFCM_rightvarInteger_var20
+	sty mega65_printCharFCM_rightvarInteger_var20+1
 	; Generic 16 bit op
 	ldy #0
 	lda #$0
-demoDrawTiles_rightvarInteger_var136 = $56
-	sta demoDrawTiles_rightvarInteger_var136
-	sty demoDrawTiles_rightvarInteger_var136+1
+mega65_printCharFCM_rightvarInteger_var23 = $56
+	sta mega65_printCharFCM_rightvarInteger_var23
+	sty mega65_printCharFCM_rightvarInteger_var23+1
 	; Right is PURE NUMERIC : Is word =1
 	; 16 bit mul or div
 	; Mul 16x8 setup
-	ldy #0
-	lda x1
+	ldy mega65_x+1
+	lda mega65_x
 	sta mul16x8_num1
 	sty mul16x8_num1Hi
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
 	lda #$2
 	sta mul16x8_num2
 	jsr mul16x8_procedure
 	; Low bit binop:
 	clc
-	adc demoDrawTiles_rightvarInteger_var136
-demoDrawTiles_wordAdd134:
-	sta demoDrawTiles_rightvarInteger_var136
+	adc mega65_printCharFCM_rightvarInteger_var23
+mega65_printCharFCM_wordAdd21:
+	sta mega65_printCharFCM_rightvarInteger_var23
 	; High-bit binop
 	tya
-	adc demoDrawTiles_rightvarInteger_var136+1
+	adc mega65_printCharFCM_rightvarInteger_var23+1
 	tay
-	lda demoDrawTiles_rightvarInteger_var136
+	lda mega65_printCharFCM_rightvarInteger_var23
 	; Low bit binop:
 	clc
-	adc demoDrawTiles_rightvarInteger_var133
-demoDrawTiles_wordAdd131:
-	sta demoDrawTiles_rightvarInteger_var133
+	adc mega65_printCharFCM_rightvarInteger_var20
+mega65_printCharFCM_wordAdd18:
+	sta mega65_printCharFCM_rightvarInteger_var20
 	; High-bit binop
 	tya
-	adc demoDrawTiles_rightvarInteger_var133+1
+	adc mega65_printCharFCM_rightvarInteger_var20+1
 	tay
-	lda demoDrawTiles_rightvarInteger_var133
+	lda mega65_printCharFCM_rightvarInteger_var20
 	; Calling storevariable on generic assign expression
-	sta addr
-	sty addr+1
-	; LineNumber: 50
+	sta mega65_a
+	sty mega65_a+1
+	; LineNumber: 93
 	lda #$0
 	; Calling storevariable on generic assign expression
 	sta DMA_mb1
@@ -1157,109 +818,622 @@ demoDrawTiles_wordAdd131:
 	; Calling storevariable on generic assign expression
 	sta DMA_b1
 	; integer assignment NodeVar
-	ldy addr+1 ; keep
-	lda addr
+	ldy mega65_a+1 ; keep
+	lda mega65_a
 	; Calling storevariable on generic assign expression
 	sta DMA_addr1
 	sty DMA_addr1+1
+	lda mega65_ch
+	; Calling storevariable on generic assign expression
+	sta DMA_value
+	jsr DMA_lpoke
+	; LineNumber: 94
+	; Generic 16 bit op
+	; Mul 16x8 setup
+	ldy mega65_y+1
+	lda mega65_y
+	sta mul16x8_num1
+	sty mul16x8_num1Hi
+	ldy mega65_LogicalRowSize+1
+	lda mega65_LogicalRowSize
+	sta mul16x8_num2
+	jsr mul16x8_procedure
+mega65_printCharFCM_rightvarInteger_var26 = $54
+	sta mega65_printCharFCM_rightvarInteger_var26
+	sty mega65_printCharFCM_rightvarInteger_var26+1
+	; Generic 16 bit op
+	ldy #0
+	lda #$1
+mega65_printCharFCM_rightvarInteger_var29 = $56
+	sta mega65_printCharFCM_rightvarInteger_var29
+	sty mega65_printCharFCM_rightvarInteger_var29+1
+	; Right is PURE NUMERIC : Is word =1
+	; 16 bit mul or div
+	; Mul 16x8 setup
+	ldy mega65_x+1
+	lda mega65_x
+	sta mul16x8_num1
+	sty mul16x8_num1Hi
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$2
+	sta mul16x8_num2
+	jsr mul16x8_procedure
+	; Low bit binop:
+	clc
+	adc mega65_printCharFCM_rightvarInteger_var29
+mega65_printCharFCM_wordAdd27:
+	sta mega65_printCharFCM_rightvarInteger_var29
+	; High-bit binop
+	tya
+	adc mega65_printCharFCM_rightvarInteger_var29+1
+	tay
+	lda mega65_printCharFCM_rightvarInteger_var29
+	; Low bit binop:
+	clc
+	adc mega65_printCharFCM_rightvarInteger_var26
+mega65_printCharFCM_wordAdd24:
+	sta mega65_printCharFCM_rightvarInteger_var26
+	; High-bit binop
+	tya
+	adc mega65_printCharFCM_rightvarInteger_var26+1
+	tay
+	lda mega65_printCharFCM_rightvarInteger_var26
+	; Calling storevariable on generic assign expression
+	sta mega65_a
+	sty mega65_a+1
+	; LineNumber: 95
+	lda #$ff
+	; Calling storevariable on generic assign expression
+	sta DMA_mb1
+	lda #$8
+	; Calling storevariable on generic assign expression
+	sta DMA_b1
 	; integer assignment NodeVar
-	ldy t+1 ; keep
-	lda t
+	ldy mega65_a+1 ; keep
+	lda mega65_a
+	; Calling storevariable on generic assign expression
+	sta DMA_addr1
+	sty DMA_addr1+1
+	lda mega65_color
+	; Calling storevariable on generic assign expression
+	sta DMA_value
+	jsr DMA_lpoke
+	; LineNumber: 96
+	rts
+end_procedure_mega65_printCharFCM:
+	; NodeProcedureDecl -1
+	; ***********  Defining procedure : Memory_Poke32
+	;    Procedure type : User-defined procedure
+	; LineNumber: 26
+Memory_Poke32_block30:
+Memory_Poke32:
+	; LineNumber: 27
+	; ****** Inline assembler section
+ 
+		ldz Memory_pa
+		lda Memory_pb
+		eom 
+		sta (Memory_zpLo),z
+	
+	; LineNumber: 34
+	rts
+end_procedure_Memory_Poke32:
+	; NodeProcedureDecl -1
+	; ***********  Defining procedure : poke16
+	;    Procedure type : User-defined procedure
+	; LineNumber: 67
+	; LineNumber: 66
+pa:	.word	0
+	; LineNumber: 66
+pb:	.word	0
+	; LineNumber: 66
+val:	.word	0
+poke16_block31:
+poke16:
+	; LineNumber: 71
+	
+; //     zphi zplo
+; //     xxxx xxxx
+; // bsp$0FF8 0000	- color ram
+	lda pb
+	ldx pb+1
+	sta Memory_zpLo
+	stx Memory_zpLo+1
+	; LineNumber: 72
+	lda pa
+	ldx pa+1
+	sta Memory_zpHi
+	stx Memory_zpHi+1
+	; LineNumber: 73
+	
+; // 32 bit addressing through pointers
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta Memory_pa
+	; integer assignment NodeVar
+	ldy val+1 ; keep
+	lda val
 	; Calling storevariable on generic assign expression
 	sta DMA_val2
 	sty DMA_val2+1
 	jsr DMA_loByte
 	; Calling storevariable on generic assign expression
-	sta DMA_value
-	jsr DMA_lpoke
-	; LineNumber: 51
-	lda #$0
+	sta Memory_pb
+	jsr Memory_Poke32
+	; LineNumber: 74
+	lda #$1
 	; Calling storevariable on generic assign expression
-	sta DMA_mb1
-	lda #$5
-	; Calling storevariable on generic assign expression
-	sta DMA_b1
-	; INTEGER optimization: a=b+c 
-	lda addr
-	clc
-	adc #$01
-	sta DMA_addr1+0
-	lda addr+1
-	adc #$00
-	sta DMA_addr1+1
+	sta Memory_pa
 	; integer assignment NodeVar
-	ldy t+1 ; keep
-	lda t
+	ldy val+1 ; keep
+	lda val
 	; Calling storevariable on generic assign expression
 	sta DMA_val1
 	sty DMA_val1+1
 	jsr DMA_hiByte
 	; Calling storevariable on generic assign expression
-	sta DMA_value
-	jsr DMA_lpoke
-	; LineNumber: 52
-	lda t
+	sta Memory_pb
+	jsr Memory_Poke32
+	; LineNumber: 75
+	rts
+end_procedure_poke16:
+	; NodeProcedureDecl -1
+	; ***********  Defining procedure : demoRRB
+	;    Procedure type : User-defined procedure
+	; LineNumber: 83
+	; LineNumber: 78
+x2:	.byte	0
+	; LineNumber: 78
+y2:	.byte	0
+	; LineNumber: 79
+ch:	.byte	0
+	; LineNumber: 80
+rampos:	.word	0
+	; LineNumber: 81
+rrbrunning:	.byte	$01
+demoRRB_block32:
+demoRRB:
+	; LineNumber: 85
+	
+; // Update RowSize
+	lda #$2d
+	; Calling storevariable on generic assign expression
+	sta mega65_RowSize
+	; LineNumber: 86
+	jsr mega65_SetRowSize
+	; LineNumber: 88
+	
+; // populate layer 0 with chars
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta ch
+	; LineNumber: 118
+	; Calling storevariable on generic assign expression
+	sta y2
+demoRRB_forloop33:
+	; LineNumber: 90
+	; LineNumber: 96
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta x2
+demoRRB_forloop54:
+	; LineNumber: 92
+	; LineNumber: 93
+	lda ch
+	; Calling storevariable on generic assign expression
+	sta mega65_ch
+	lda #$6
+	; Calling storevariable on generic assign expression
+	sta mega65_color
+	lda x2
+	; Calling storevariable on generic assign expression
+	sta mega65_x
+	sty mega65_x+1
+	lda y2
+	; Calling storevariable on generic assign expression
+	sta mega65_y
+	sty mega65_y+1
+	jsr mega65_printCharFCM
+	; LineNumber: 94
+	; Test Inc dec D
+	inc ch
+	; LineNumber: 95
+demoRRB_forloopcounter56:
+demoRRB_loopstart57:
+	; Compare is onpage
+	; Test Inc dec D
+	inc x2
+	lda #$27
+	cmp x2 ;keep
+	bne demoRRB_forloop54
+demoRRB_loopdone61: ;keep:
+demoRRB_forloopend55:
+demoRRB_loopend58:
+	; LineNumber: 97
+	
+; // Add GOTOX|TRANSPARENT into colorram
+	; Generic 16 bit op
+	ldy #0
+	lda #80
+demoRRB_rightvarInteger_var64 = $54
+	sta demoRRB_rightvarInteger_var64
+	sty demoRRB_rightvarInteger_var64+1
+	; Mul 16x8 setup
+	ldy #0
+	lda y2
+	sta mul16x8_num1
+	sty mul16x8_num1Hi
+	ldy mega65_LogicalRowSize+1
+	lda mega65_LogicalRowSize
+	sta mul16x8_num2
+	jsr mul16x8_procedure
+	; Low bit binop:
 	clc
-	adc #$01
-	sta t+0
-	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
-	bcc demoDrawTiles_WordAdd138
-	inc t+1
-demoDrawTiles_WordAdd138:
-	; LineNumber: 53
-	; Binary clause INTEGER: GREATER
-	; Compare INTEGER with pure num / var optimization. GREATER. 
-	lda t+1   ; compare high bytes
-	cmp #$08 ;keep
-	bcc demoDrawTiles_elsedoneblock142
-	bne demoDrawTiles_ConditionalTrueBlock140
-	lda t
-	cmp #$ff ;keep
-	bcc demoDrawTiles_elsedoneblock142
-	beq demoDrawTiles_elsedoneblock142
-demoDrawTiles_ConditionalTrueBlock140: ;Main true block ;keep:
-	; LineNumber: 53
+	adc demoRRB_rightvarInteger_var64
+demoRRB_wordAdd62:
+	sta demoRRB_rightvarInteger_var64
+	; High-bit binop
+	tya
+	adc demoRRB_rightvarInteger_var64+1
+	tay
+	lda demoRRB_rightvarInteger_var64
+	; Calling storevariable on generic assign expression
+	sta rampos
+	sty rampos+1
+	; LineNumber: 99
+	
+; //DMA::lpoke($ff,$08,rampos,RRB::GOTOX|RRB::TRANSPARENT);
 	; Integer constant assigning
-	ldy #$08
+	ldy #$0f
+	lda #$f8
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$90
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 101
+	
+; // save ram position 	
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	pha
+	lda y2
+	asl
+	tax
+	pla
+	sta sprAddr,x
+	tya
+	sta sprAddr+1,x
+	; LineNumber: 103
+	
+; // New Position of "Sprite"
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$5
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	; Load Integer array
+	lda y2
+	asl
+	tax
+	lda sprPos,x
+	ldy sprPos+1,x
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 105
+	
+; // Draw new Char - "Sprite"
+	lda rampos
+	clc
+	adc #$02
+	sta rampos+0
+	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
+	bcc demoRRB_WordAdd65
+	inc rampos+1
+demoRRB_WordAdd65:
+	; LineNumber: 106
+	; Integer constant assigning
+	ldy #$0f
+	lda #$f8
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	; Integer constant assigning
+	ldy #$04
 	lda #$00
 	; Calling storevariable on generic assign expression
-	sta t
-	sty t+1
-demoDrawTiles_elsedoneblock142:
-	; LineNumber: 55
-demoDrawTiles_forloopcounter112:
-demoDrawTiles_loopstart113:
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 107
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$5
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$2
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 109
+	
+; // RRB GotoX 320
+	lda rampos
+	clc
+	adc #$02
+	sta rampos+0
+	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
+	bcc demoRRB_WordAdd66
+	inc rampos+1
+demoRRB_WordAdd66:
+	; LineNumber: 110
+	; Integer constant assigning
+	ldy #$0f
+	lda #$f8
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$10
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 111
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$5
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	; Integer constant assigning
+	ldy #$01
+	lda #$40
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 113
+	
+; // RRB GotoX 320 - finish char
+	lda rampos
+	clc
+	adc #$02
+	sta rampos+0
+	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
+	bcc demoRRB_WordAdd67
+	inc rampos+1
+demoRRB_WordAdd67:
+	; LineNumber: 114
+	; Integer constant assigning
+	ldy #$0f
+	lda #$f8
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 115
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$5
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; integer assignment NodeVar
+	ldy rampos+1 ; keep
+	lda rampos
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 117
+demoRRB_forloopcounter35:
+demoRRB_loopstart36:
 	; Test Inc dec D
-	inc x1
-	lda #$27
-	cmp x1 ;keep
-	beq demoDrawTiles_loopdone145
-demoDrawTiles_loopnotdone146:
-	jmp demoDrawTiles_forloop110
-demoDrawTiles_loopdone145:
-demoDrawTiles_forloopend111:
-demoDrawTiles_loopend114:
-	; LineNumber: 56
-demoDrawTiles_forloopcounter68:
-demoDrawTiles_loopstart69:
-	; Test Inc dec D
-	inc y1
+	inc y2
 	lda #$18
-	cmp y1 ;keep
-	beq demoDrawTiles_loopdone147
-demoDrawTiles_loopnotdone148:
-	jmp demoDrawTiles_forloop66
-demoDrawTiles_loopdone147:
-demoDrawTiles_forloopend67:
-demoDrawTiles_loopend70:
-	; LineNumber: 57
+	cmp y2 ;keep
+	beq demoRRB_loopdone68
+demoRRB_loopnotdone69:
+	jmp demoRRB_forloop33
+demoRRB_loopdone68:
+demoRRB_forloopend34:
+demoRRB_loopend37:
+	; LineNumber: 118
+demoRRB_while70:
+demoRRB_loopstart74:
+	; Binary clause Simplified: NOTEQUALS
+	lda rrbrunning
+	; Compare with pure num / var optimization
+	cmp #$0;keep
+	beq demoRRB_localfailed102
+	jmp demoRRB_ConditionalTrueBlock71
+demoRRB_localfailed102:
+	jmp demoRRB_elsedoneblock73
+demoRRB_ConditionalTrueBlock71: ;Main true block ;keep:
+	; LineNumber: 119
+	; LineNumber: 120
+	; wait for raster
+	ldx #$ff ; optimized, look out for bugs
+	cpx $d012
+	bne *-3
+	; LineNumber: 128
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta y2
+demoRRB_forloop104:
+	; LineNumber: 122
+	; LineNumber: 123
+	; HandleVarBinopB16bit
+	; RHS is pure, optimization
+	; Load Integer array
+	lda y2
+	asl
+	tax
+	lda sprPos,x
+	ldy sprPos+1,x
+	clc
+	adc #$01
+	; Testing for byte:  #$00
+	; RHS is word, no optimization
+	pha 
+	tya 
+	adc #$00
+	tay 
+	pla 
+	; Calling storevariable on generic assign expression
+	pha
+	lda y2
+	asl
+	tax
+	pla
+	sta sprPos,x
+	tya
+	sta sprPos+1,x
+	; LineNumber: 124
+	; Binary clause INTEGER: GREATER
+	; Load Integer array
+	lda y2
+	asl
+	tax
+	lda sprPos,x
+	ldy sprPos+1,x
+demoRRB_rightvarInteger_var125 = $5A
+	sta demoRRB_rightvarInteger_var125
+	sty demoRRB_rightvarInteger_var125+1
+	; Compare INTEGER with pure num / var optimization. GREATER. 
+	lda demoRRB_rightvarInteger_var125+1   ; compare high bytes
+	cmp #$01 ;keep
+	bcc demoRRB_elsedoneblock123
+	bne demoRRB_ConditionalTrueBlock121
+	lda demoRRB_rightvarInteger_var125
+	cmp #$40 ;keep
+	bcc demoRRB_elsedoneblock123
+	beq demoRRB_elsedoneblock123
+demoRRB_ConditionalTrueBlock121: ;Main true block ;keep:
+	; LineNumber: 124
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$0
+	; Calling storevariable on generic assign expression
+	pha
+	lda y2
+	asl
+	tax
+	pla
+	sta sprPos,x
+	tya
+	sta sprPos+1,x
+demoRRB_elsedoneblock123:
+	; LineNumber: 126
+	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	lda #$5
+	; Calling storevariable on generic assign expression
+	sta pa
+	sty pa+1
+	; Load Integer array
+	lda y2
+	asl
+	tax
+	lda sprAddr,x
+	ldy sprAddr+1,x
+	; Calling storevariable on generic assign expression
+	sta pb
+	sty pb+1
+	; Load Integer array
+	lda y2
+	asl
+	tax
+	lda sprPos,x
+	ldy sprPos+1,x
+	; Calling storevariable on generic assign expression
+	sta val
+	sty val+1
+	jsr poke16
+	; LineNumber: 127
+demoRRB_forloopcounter106:
+demoRRB_loopstart107:
+	; Test Inc dec D
+	inc y2
+	lda #$18
+	cmp y2 ;keep
+	beq demoRRB_loopdone127
+demoRRB_loopnotdone128:
+	jmp demoRRB_forloop104
+demoRRB_loopdone127:
+demoRRB_forloopend105:
+demoRRB_loopend108:
+	; LineNumber: 128
+	jmp demoRRB_while70
+demoRRB_elsedoneblock73:
+demoRRB_loopend75:
+	; LineNumber: 129
 	rts
-end_procedure_demoDrawTiles:
+end_procedure_demoRRB:
 block1:
 main_block_begin_:
-	; LineNumber: 60
+	; LineNumber: 132
 	jsr mega65_setFCM
-	; LineNumber: 61
+	; LineNumber: 133
 	lda #$5
 	; Calling storevariable on generic assign expression
 	sta mega65_b
@@ -1269,9 +1443,7 @@ main_block_begin_:
 	sta mega65_addr
 	sty mega65_addr+1
 	jsr mega65_relocateScreen
-	; LineNumber: 62
-	jsr mega65_SetRowSize
-	; LineNumber: 63
+	; LineNumber: 135
 	lda #$0
 	; Calling storevariable on generic assign expression
 	sta DMA_dmb1
@@ -1292,7 +1464,7 @@ main_block_begin_:
 	sta DMA_count2
 	sty DMA_count2+1
 	jsr DMA_lfill
-	; LineNumber: 64
+	; LineNumber: 136
 	lda #$ff
 	; Calling storevariable on generic assign expression
 	sta DMA_dmb1
@@ -1307,13 +1479,13 @@ main_block_begin_:
 	; Calling storevariable on generic assign expression
 	sta DMA_value1
 	; Integer constant assigning
-	ldy #$07
-	lda #$d0
+	ldy #$0f
+	lda #$a0
 	; Calling storevariable on generic assign expression
 	sta DMA_count2
 	sty DMA_count2+1
 	jsr DMA_lfill
-	; LineNumber: 65
+	; LineNumber: 137
 	lda #$0
 	; Calling storevariable on generic assign expression
 	sta DMA_dmb1
@@ -1334,29 +1506,17 @@ main_block_begin_:
 	sta DMA_count2
 	sty DMA_count2+1
 	jsr DMA_lfill
-	; LineNumber: 67
-	jsr palettes_InitPalette
-	; LineNumber: 68
-	jsr initTiles
-	; LineNumber: 71
-	jsr demoDrawTiles
-	; LineNumber: 74
-	jsr waitKey
-	; LineNumber: 76
-MainProgram_while149:
-MainProgram_loopstart153:
-	; Binary clause Simplified: EQUALS
-	lda blah
-	; Compare with pure num / var optimization
-	cmp #$1;keep
-	bne MainProgram_elsedoneblock152
-MainProgram_ConditionalTrueBlock150: ;Main true block ;keep:
-	; LineNumber: 77
-	; LineNumber: 78
-	jmp MainProgram_while149
-MainProgram_elsedoneblock152:
-MainProgram_loopend154:
-	; LineNumber: 79
+	; LineNumber: 147
+	
+; // uncomment next 4 lines for tile demo_LogicalRowSize
+; // mega65::SetRowSize();
+; // palettes::InitPalette();			
+; // for chars(demoRRB) the palette doesnt fit, as the first 16 colors a grey shades
+; // initTiles();
+; // demoDrawTiles();
+; // RRB Demo
+	jsr demoRRB
+	; LineNumber: 150
 main_block_end_:
 	; End of program
 	; Ending memory block at $2001

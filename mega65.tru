@@ -13,6 +13,7 @@ var RowSize : byte = 40;
 @donotremove RowSize
 @donotremove LogicalRowSize
 
+
 procedure setFCM();
 begin
 	asm("
