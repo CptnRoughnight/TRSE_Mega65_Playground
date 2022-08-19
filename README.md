@@ -7,9 +7,16 @@ A collection of units for development for the Mega65
 	![FCM IMAGE](fcm.png?raw=true "FCM")
 	
 Units :
+
 	DMA.tru
+	
 		- handling of Mega65's DMAgic
+		
 	mega65.tru 
+	
 		- collection of functions regarding setting up the mega (FCM etc.)
+		
 	plalettes.tru
+	
 		- Setting up Palettes
+		
