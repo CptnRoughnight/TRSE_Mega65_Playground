@@ -1,0 +1,168 @@
+unit DMA;
+
+var p : pointer;
+
+	// Index constants for dmalist
+	const option_0b 		: byte = 0;
+	const option_80 		: byte = 1;
+	const source_mb 		: byte = 2;
+	const option_81 		: byte = 3;
+	const dest_mb			: byte = 4;
+	const option_85 		: byte = 5;
+	const dest_skip 		: byte = 6;
+	const end_of_options 	: byte = 7;
+	const command   		: byte = 8;
+	const count     		: byte = 9;		// 16 bit
+	const source_addr 		: byte = 11; 	// 16 bit
+	const source_bank 		: byte = 13;
+	const dest_addr 		: byte = 14;	// 16 bit
+	const dest_bank 		: byte = 16;
+	const sub_cmd 			: byte = 17;
+	const modulo 			: byte = 18;
+
+	dmalist  : array[20] of byte;
+	
+// Helper functions, don't know if TRSE has something build in.. couldnt find it :)
+function hiByte(val1 : integer) : byte;
+begin
+	hiByte := (val1 >> 8);
+end;
+
+function loByte(val2 : integer) : byte;
+begin
+	loByte := (val2 & $ff);
+end;
+
+// Start the DMA process... don't call unless you populatet the dmalist array
+procedure do_dma();
+begin
+	POKE(^$D702,0,0);
+	POKE(^$D704,0,$00);
+	POKE(^$D701,0,hiByte(#dmalist));
+	POKE(^$D705,0,loByte(#dmalist));
+end;
+
+// peeks a value at address [mb][b][addr]
+function lpeek(mb:byte;b:byte;addr : integer) : byte;
+var dma_byte : byte;
+begin
+	dmalist[option_0b] := $0b;
+	dmalist[option_80] := $80;
+	dmalist[option_81] := $81;
+	dmalist[option_85] := $85;
+	dmalist[dest_skip] := 1;
+	dmalist[end_of_options] := $00;
+	dmalist[sub_cmd] := $00;
+	dmalist[command] := $00;
+	
+	dmalist[count] := 1;
+	dmalist[count+1] := 0;
+	
+	dmalist[source_mb] := mb;
+	dmalist[source_bank] := b;
+	dmalist[source_addr] := loByte(addr);
+	dmalist[source_addr+1] := hiByte(addr);
+	
+	
+	dmalist[dest_mb]   := $00;
+	dmalist[dest_bank] := 0;
+	dmalist[dest_addr] := loByte(#dma_byte);
+	dmalist[dest_addr+1] := hiByte(#dma_byte);
+	
+	do_dma();
+	
+	lpeek:=dma_byte;
+end;
+
+// peeks a value to address [mb][b][addr]
+procedure lpoke(mb1:byte;b1:byte;addr1:integer;value:byte);
+var dma_byte1 : byte;
+begin
+	dmalist[option_0b] := $0b;
+	dmalist[option_80] := $80;
+	dmalist[option_81] := $81;
+
+	dmalist[option_85] := $85;
+	dmalist[dest_skip] := 1;
+	dmalist[end_of_options] := $00;
+	dmalist[sub_cmd] := $00;
+	
+
+	dmalist[command] := $00;
+	dmalist[count] := 1;
+	dmalist[count+1] := 0;
+	
+	dma_byte1 := value;	
+	
+	dmalist[source_mb] := 00;	
+	dmalist[source_bank] := 0;
+	dmalist[source_addr] := loByte(#dma_byte1);
+	dmalist[source_addr+1] := hiByte(#dma_byte1);
+	
+	dmalist[dest_mb]   := mb1;
+	dmalist[dest_bank] := b1;
+	dmalist[dest_addr] := loByte(addr1);
+	dmalist[dest_addr+1] := hiByte(addr1);
+
+	
+	do_dma();
+end;
+
+// copy count1 bytes from [smb][sb][saddr] to [dmb][db][daddr]
+procedure lcopy(smb:byte;sb:byte;saddr:integer;dmb:byte;db:byte;daddr:integer;count1:integer);
+begin
+	dmalist[option_0b] := $0b;
+	dmalist[option_80] := $80;
+	dmalist[option_81] := $81;
+	dmalist[option_85] := $85;
+	dmalist[dest_skip] := 1;
+	dmalist[end_of_options] := $00;
+	dmalist[sub_cmd] := $00;
+	dmalist[command] := $00;
+	
+	dmalist[count] := loByte(count1);
+	dmalist[count+1] := hiByte(count1);
+	
+	dmalist[source_mb] := smb;	
+	dmalist[source_bank] := sb;
+	dmalist[source_addr] := loByte(saddr);
+	dmalist[source_addr+1] := hiByte(saddr);
+
+	dmalist[dest_mb]   := dmb;
+	dmalist[dest_bank] := db;
+	dmalist[dest_addr] := loByte(daddr);
+	dmalist[dest_addr+1] := hiByte(daddr);
+
+	do_dma();
+end;
+
+// fill count2 bytes at address [dmb1][db1][daddr1]
+procedure lfill(dmb1:byte;db1:byte;daddr1:integer;value1:byte;count2:integer);
+begin
+	dmalist[option_0b] := $0b;
+	dmalist[option_80] := $80;
+	dmalist[option_81] := $81;
+	dmalist[option_85] := $85;
+	dmalist[dest_skip] := 1;
+	dmalist[end_of_options] := $00;
+	dmalist[sub_cmd] := $00;
+	dmalist[command] := $03;
+	
+	dmalist[count] := loByte(count2);
+	dmalist[count+1] := hiByte(count2);
+	
+	dmalist[source_mb] := $00;
+	dmalist[source_bank] := $00;	
+	dmalist[source_addr] := value1;
+	dmalist[source_addr+1] := 0;
+	
+	dmalist[dest_mb]   := dmb1;
+	dmalist[dest_bank] := db1;
+	dmalist[dest_addr] := loByte(daddr1);
+	dmalist[dest_addr+1] := hiByte(daddr1);
+
+	do_dma();
+end;
+
+
+end.

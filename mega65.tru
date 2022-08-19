@@ -1,0 +1,106 @@
+unit mega65;
+
+@use "DMA"
+@use "str"
+
+var RowSize : byte = 40;
+	LogicalRowSize : integer;
+	screenMB: byte;
+	screenB : byte;
+	screenaddr : integer;
+	s1:^byte;
+
+@donotremove RowSize
+@donotremove LogicalRowSize
+
+procedure setFCM();
+begin
+	asm("
+		sei
+		lda #$35
+		sta $01
+		
+		lda #$41
+		sta $00
+		
+		lda #$00
+		tax
+		tay
+		taz
+		map
+		eom
+		
+		lda #$47
+		sta $d02f
+		lda #$53
+		sta $d02f
+		
+		lda #$7f
+		sta $dc0d
+		sta $dd0d
+		
+		lda #$70
+		sta $d640
+		eom
+		
+		lda #$00
+		sta $d01a
+		
+		lda #%11111000
+		trb $d030
+		
+		cli
+		
+		lda #%00000111
+		trb $d016
+		
+		lda #%10100000
+		trb $d031
+		
+		lda #%00000101
+		sta $d054
+		
+		lda #$00
+		sta $d020
+		sta $d021
+		
+	");	
+end;
+
+procedure relocateScreen(b:byte;addr:integer);
+var p : pointer;
+begin
+	screenB := b;
+	screenaddr := addr;
+	POKE(^$D061,0,addr>>8);
+	POKE(^$D060,0,addr&$FF);
+	POKE(^$D062,0,b);
+end;
+
+procedure SetRowSize();
+begin
+	LogicalRowSize := RowSize*2;
+	POKE(^$D05E,0,RowSize);
+	POKE(^$D059,0,(LogicalRowSize>>8));
+	POKE(^$D058,0,(LogicalRowSize&$FF));
+end;
+
+procedure printCharFCM(ch : byte;color:byte;x,y:integer);
+var a:integer;
+begin
+	a := $0000 + x*2 + y*LogicalRowSize;
+	DMA::lpoke($00,$05,a,ch);
+	a := $0001 + x*2 + y*LogicalRowSize;
+	DMA::lpoke($ff,$08,a,color);
+end;
+
+procedure printStringFCM(s1 : global ^byte;color1:byte;x1,y1:integer);
+var i:byte;
+begin
+	for i:=0 to str::strlen(s1) do
+	begin
+		printCharFCM(s1[i],color1,x1+i,y1);
+	end;
+end;
+
+end.

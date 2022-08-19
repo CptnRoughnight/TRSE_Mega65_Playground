@@ -1,0 +1,79 @@
+program HelloWorld;
+@use "mega65"
+@use "palettes"
+@use "DMA"
+ 
+var
+	blah : byte = 1;
+	test : byte  = 0;
+	
+	x,y : integer;
+	addr : integer;
+	
+
+	
+procedure waitKey();
+begin
+	asm("
+	waitforkey:
+		lda $D610
+		beq waitforkey
+	");	
+end;
+
+// set tiles 2048 to 256 colors 
+procedure initTiles();
+var	col : byte;
+addr1:integer;
+begin
+	addr1 := $0000;
+	col := 0;
+	for x := 0 to 255 do
+	begin
+		DMA::lfill($00,$02,addr1,col,64);
+		col := col + 1;
+		addr1 := addr1 + 64;
+	end;	
+end;
+
+procedure demoDrawTiles();
+var t : integer;
+x1,y1 : byte;
+begin
+	t := 2048;
+	for y1 := 0 to 24 do
+	begin
+		for x1 := 0 to 39 do
+		begin
+
+			addr := $0000 + (x1*2) + (y1*mega65::LogicalRowSize);
+			DMA::lpoke($00,$05,addr,DMA::loByte(t));
+			DMA::lpoke($00,$05,addr+1,DMA::hiByte(t));
+			t := t + 1;
+			if (t > 2048+255) then
+				t := 2048;
+		end;
+	end;
+end;
+
+begin
+	mega65::setFCM();
+	mega65::relocateScreen($05,$0000);
+	mega65::SetRowSize();
+	DMA::lfill($00,$05,$0000,$00,4000);
+	DMA::lfill($ff,$08,$0000,$00,2000);
+	DMA::lfill($00,$02,$0000,$00,16384);
+	
+	palettes::InitPalette();
+	initTiles();
+	
+	
+	demoDrawTiles();
+
+	
+	waitKey();
+
+	while(blah=1) do
+	begin
+	end;
+end.
