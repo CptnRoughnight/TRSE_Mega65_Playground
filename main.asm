@@ -24,7 +24,7 @@ endd_s:
 	; Ending memory block at $2001
 	; Resuming memory block at $2001
 HelloWorld:
-	; LineNumber: 131
+	; LineNumber: 186
 	jmp block1
 	; LineNumber: 23
 DMA_dmalist:	.res	20,0
@@ -40,17 +40,6 @@ mega65_screenaddr:	.word	0
 Memory_zpLo	= $90
 	; LineNumber: 6
 Memory_zpHi	= $92
-	; LineNumber: 7
-Memory_pa:	.byte	0
-	; LineNumber: 7
-Memory_pb:	.byte	0
-	; LineNumber: 16
-sprAddr = $3000
-	; LineNumber: 17
-sprPos:	.word $0a, $0c8, $01e, $042, $046, $078, $02, $05a
-	.word $037, $0fa, $0a, $0c8, $01e, $042, $046, $078
-	.word $02, $05a, $037, $0fa, $0a, $0c8, $01e, $042
-	.word $046
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : init16x8div
 	;    Procedure type : Built-in function
@@ -520,47 +509,49 @@ DMA_lfill:
 	rts
 end_procedure_DMA_lfill:
 	; NodeProcedureDecl -1
-	; ***********  Defining procedure : mega65_setFCM
+	; ***********  Defining procedure : mega65_init
 	;    Procedure type : User-defined procedure
 	; LineNumber: 18
-mega65_setFCM:
+mega65_init:
 	; LineNumber: 19
 	; ****** Inline assembler section
-		sei
+		sei 
 		lda #$35
 		sta $01
 		
+		; enable 40 mhz
 		lda #$41
 		sta $00
 		
-		lda #$00
-		tax
-		tay
-		taz
-		map
-		eom
-		
-		lda #$47
-		sta $d02f
-		lda #$53
-		sta $d02f
-		
-		lda #$7f
-		sta $dc0d
-		sta $dd0d
-		
+		; disable C65 ROM
 		lda #$70
 		sta $d640
 		eom
-		
-		lda #$00
-		sta $d01a
-		
+		; unmap C65 rom
 		lda #%11111000
 		trb $d030
 		
+		; disable CIA interrupts
+		lda $7f
+		sta $dc0d
+		sta $dd0d
+		
+		; disable IRQ interrupts
+		lda #$00
+		sta $d01a
 		cli
 		
+	
+	; LineNumber: 47
+	rts
+end_procedure_mega65_init:
+	; NodeProcedureDecl -1
+	; ***********  Defining procedure : mega65_setFCM
+	;    Procedure type : User-defined procedure
+	; LineNumber: 51
+mega65_setFCM:
+	; LineNumber: 52
+	; ****** Inline assembler section
 		lda #%00000111
 		trb $d016
 		
@@ -575,67 +566,67 @@ mega65_setFCM:
 		sta $d021
 		
 	
-	; LineNumber: 69
+	; LineNumber: 67
 	rts
 end_procedure_mega65_setFCM:
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : mega65_relocateScreen
 	;    Procedure type : User-defined procedure
-	; LineNumber: 73
-	; LineNumber: 72
+	; LineNumber: 71
+	; LineNumber: 70
 mega65_p	= $02
-	; LineNumber: 71
+	; LineNumber: 69
 mega65_b:	.byte	0
-	; LineNumber: 71
+	; LineNumber: 69
 mega65_addr:	.word	0
-mega65_relocateScreen_block11:
+mega65_relocateScreen_block12:
 mega65_relocateScreen:
-	; LineNumber: 74
+	; LineNumber: 72
 	lda mega65_b
 	; Calling storevariable on generic assign expression
 	sta mega65_screenB
-	; LineNumber: 75
+	; LineNumber: 73
 	; integer assignment NodeVar
 	ldy mega65_addr+1 ; keep
 	lda mega65_addr
 	; Calling storevariable on generic assign expression
 	sta mega65_screenaddr
 	sty mega65_screenaddr+1
-	; LineNumber: 76
+	; LineNumber: 74
 	; Poke
 	; Optimization: shift is zero
 	; integer assignment NodeVar
-mega65_relocateScreen_tempVarShift_var12 = $54
-	sta mega65_relocateScreen_tempVarShift_var12
-	sty mega65_relocateScreen_tempVarShift_var12+1
+mega65_relocateScreen_tempVarShift_var13 = $54
+	sta mega65_relocateScreen_tempVarShift_var13
+	sty mega65_relocateScreen_tempVarShift_var13+1
 	; COUNT : 8
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-		lsr mega65_relocateScreen_tempVarShift_var12+1 ;keep
-	ror mega65_relocateScreen_tempVarShift_var12+0 ;keep
+		lsr mega65_relocateScreen_tempVarShift_var13+1 ;keep
+	ror mega65_relocateScreen_tempVarShift_var13+0 ;keep
 
-	lda mega65_relocateScreen_tempVarShift_var12
+	lda mega65_relocateScreen_tempVarShift_var13
 	sta $d061
-	; LineNumber: 77
+	; LineNumber: 75
 	; Poke
 	; Optimization: shift is zero
 	; HandleVarBinopB16bit
@@ -652,20 +643,27 @@ mega65_relocateScreen_tempVarShift_var12 = $54
 	tay 
 	pla 
 	sta $d060
-	; LineNumber: 78
+	; LineNumber: 76
 	; Poke
 	; Optimization: shift is zero
 	lda mega65_b
 	sta $d062
-	; LineNumber: 79
+	; LineNumber: 77
 	rts
 end_procedure_mega65_relocateScreen:
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : mega65_SetRowSize
 	;    Procedure type : User-defined procedure
-	; LineNumber: 82
+	; LineNumber: 80
+	; LineNumber: 79
+mega65_newRowSize:	.byte	0
+mega65_SetRowSize_block15:
 mega65_SetRowSize:
-	; LineNumber: 83
+	; LineNumber: 81
+	lda mega65_newRowSize
+	; Calling storevariable on generic assign expression
+	sta mega65_RowSize
+	; LineNumber: 82
 	; Right is PURE NUMERIC : Is word =1
 	; 16 bit mul or div
 	; Mul 16x8 setup
@@ -679,48 +677,48 @@ mega65_SetRowSize:
 	; Calling storevariable on generic assign expression
 	sta mega65_LogicalRowSize
 	sty mega65_LogicalRowSize+1
-	; LineNumber: 84
+	; LineNumber: 83
 	; Poke
 	; Optimization: shift is zero
 	lda mega65_RowSize
 	sta $d05e
-	; LineNumber: 85
+	; LineNumber: 84
 	; Poke
 	; Optimization: shift is zero
 	; integer assignment NodeVar
 	ldy mega65_LogicalRowSize+1 ; keep
 	lda mega65_LogicalRowSize
-mega65_SetRowSize_tempVarShift_var15 = $54
-	sta mega65_SetRowSize_tempVarShift_var15
-	sty mega65_SetRowSize_tempVarShift_var15+1
+mega65_SetRowSize_tempVarShift_var16 = $54
+	sta mega65_SetRowSize_tempVarShift_var16
+	sty mega65_SetRowSize_tempVarShift_var16+1
 	; COUNT : 8
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-		lsr mega65_SetRowSize_tempVarShift_var15+1 ;keep
-	ror mega65_SetRowSize_tempVarShift_var15+0 ;keep
+		lsr mega65_SetRowSize_tempVarShift_var16+1 ;keep
+	ror mega65_SetRowSize_tempVarShift_var16+0 ;keep
 
-	lda mega65_SetRowSize_tempVarShift_var15
+	lda mega65_SetRowSize_tempVarShift_var16
 	sta $d059
-	; LineNumber: 86
+	; LineNumber: 85
 	; Poke
 	; Optimization: shift is zero
 	; HandleVarBinopB16bit
@@ -737,26 +735,26 @@ mega65_SetRowSize_tempVarShift_var15 = $54
 	tay 
 	pla 
 	sta $d058
-	; LineNumber: 87
+	; LineNumber: 86
 	rts
 end_procedure_mega65_SetRowSize:
 	; NodeProcedureDecl -1
 	; ***********  Defining procedure : mega65_printCharFCM
 	;    Procedure type : User-defined procedure
-	; LineNumber: 91
 	; LineNumber: 90
+	; LineNumber: 89
 mega65_a:	.word	0
-	; LineNumber: 89
+	; LineNumber: 88
 mega65_ch:	.byte	0
-	; LineNumber: 89
+	; LineNumber: 88
 mega65_color:	.byte	0
-	; LineNumber: 89
+	; LineNumber: 88
 mega65_x:	.word	0
-	; LineNumber: 89
+	; LineNumber: 88
 mega65_y:	.word	0
-mega65_printCharFCM_block17:
+mega65_printCharFCM_block18:
 mega65_printCharFCM:
-	; LineNumber: 92
+	; LineNumber: 91
 	; Generic 16 bit op
 	; Mul 16x8 setup
 	ldy mega65_y+1
@@ -767,15 +765,15 @@ mega65_printCharFCM:
 	lda mega65_LogicalRowSize
 	sta mul16x8_num2
 	jsr mul16x8_procedure
-mega65_printCharFCM_rightvarInteger_var20 = $54
-	sta mega65_printCharFCM_rightvarInteger_var20
-	sty mega65_printCharFCM_rightvarInteger_var20+1
+mega65_printCharFCM_rightvarInteger_var21 = $54
+	sta mega65_printCharFCM_rightvarInteger_var21
+	sty mega65_printCharFCM_rightvarInteger_var21+1
 	; Generic 16 bit op
 	ldy #0
 	lda #$0
-mega65_printCharFCM_rightvarInteger_var23 = $56
-	sta mega65_printCharFCM_rightvarInteger_var23
-	sty mega65_printCharFCM_rightvarInteger_var23+1
+mega65_printCharFCM_rightvarInteger_var24 = $56
+	sta mega65_printCharFCM_rightvarInteger_var24
+	sty mega65_printCharFCM_rightvarInteger_var24+1
 	; Right is PURE NUMERIC : Is word =1
 	; 16 bit mul or div
 	; Mul 16x8 setup
@@ -789,28 +787,28 @@ mega65_printCharFCM_rightvarInteger_var23 = $56
 	jsr mul16x8_procedure
 	; Low bit binop:
 	clc
-	adc mega65_printCharFCM_rightvarInteger_var23
-mega65_printCharFCM_wordAdd21:
-	sta mega65_printCharFCM_rightvarInteger_var23
+	adc mega65_printCharFCM_rightvarInteger_var24
+mega65_printCharFCM_wordAdd22:
+	sta mega65_printCharFCM_rightvarInteger_var24
 	; High-bit binop
 	tya
-	adc mega65_printCharFCM_rightvarInteger_var23+1
+	adc mega65_printCharFCM_rightvarInteger_var24+1
 	tay
-	lda mega65_printCharFCM_rightvarInteger_var23
+	lda mega65_printCharFCM_rightvarInteger_var24
 	; Low bit binop:
 	clc
-	adc mega65_printCharFCM_rightvarInteger_var20
-mega65_printCharFCM_wordAdd18:
-	sta mega65_printCharFCM_rightvarInteger_var20
+	adc mega65_printCharFCM_rightvarInteger_var21
+mega65_printCharFCM_wordAdd19:
+	sta mega65_printCharFCM_rightvarInteger_var21
 	; High-bit binop
 	tya
-	adc mega65_printCharFCM_rightvarInteger_var20+1
+	adc mega65_printCharFCM_rightvarInteger_var21+1
 	tay
-	lda mega65_printCharFCM_rightvarInteger_var20
+	lda mega65_printCharFCM_rightvarInteger_var21
 	; Calling storevariable on generic assign expression
 	sta mega65_a
 	sty mega65_a+1
-	; LineNumber: 93
+	; LineNumber: 92
 	lda #$0
 	; Calling storevariable on generic assign expression
 	sta DMA_mb1
@@ -827,7 +825,7 @@ mega65_printCharFCM_wordAdd18:
 	; Calling storevariable on generic assign expression
 	sta DMA_value
 	jsr DMA_lpoke
-	; LineNumber: 94
+	; LineNumber: 93
 	; Generic 16 bit op
 	; Mul 16x8 setup
 	ldy mega65_y+1
@@ -838,15 +836,15 @@ mega65_printCharFCM_wordAdd18:
 	lda mega65_LogicalRowSize
 	sta mul16x8_num2
 	jsr mul16x8_procedure
-mega65_printCharFCM_rightvarInteger_var26 = $54
-	sta mega65_printCharFCM_rightvarInteger_var26
-	sty mega65_printCharFCM_rightvarInteger_var26+1
+mega65_printCharFCM_rightvarInteger_var27 = $54
+	sta mega65_printCharFCM_rightvarInteger_var27
+	sty mega65_printCharFCM_rightvarInteger_var27+1
 	; Generic 16 bit op
 	ldy #0
 	lda #$1
-mega65_printCharFCM_rightvarInteger_var29 = $56
-	sta mega65_printCharFCM_rightvarInteger_var29
-	sty mega65_printCharFCM_rightvarInteger_var29+1
+mega65_printCharFCM_rightvarInteger_var30 = $56
+	sta mega65_printCharFCM_rightvarInteger_var30
+	sty mega65_printCharFCM_rightvarInteger_var30+1
 	; Right is PURE NUMERIC : Is word =1
 	; 16 bit mul or div
 	; Mul 16x8 setup
@@ -860,28 +858,28 @@ mega65_printCharFCM_rightvarInteger_var29 = $56
 	jsr mul16x8_procedure
 	; Low bit binop:
 	clc
-	adc mega65_printCharFCM_rightvarInteger_var29
-mega65_printCharFCM_wordAdd27:
-	sta mega65_printCharFCM_rightvarInteger_var29
+	adc mega65_printCharFCM_rightvarInteger_var30
+mega65_printCharFCM_wordAdd28:
+	sta mega65_printCharFCM_rightvarInteger_var30
 	; High-bit binop
 	tya
-	adc mega65_printCharFCM_rightvarInteger_var29+1
+	adc mega65_printCharFCM_rightvarInteger_var30+1
 	tay
-	lda mega65_printCharFCM_rightvarInteger_var29
+	lda mega65_printCharFCM_rightvarInteger_var30
 	; Low bit binop:
 	clc
-	adc mega65_printCharFCM_rightvarInteger_var26
-mega65_printCharFCM_wordAdd24:
-	sta mega65_printCharFCM_rightvarInteger_var26
+	adc mega65_printCharFCM_rightvarInteger_var27
+mega65_printCharFCM_wordAdd25:
+	sta mega65_printCharFCM_rightvarInteger_var27
 	; High-bit binop
 	tya
-	adc mega65_printCharFCM_rightvarInteger_var26+1
+	adc mega65_printCharFCM_rightvarInteger_var27+1
 	tay
-	lda mega65_printCharFCM_rightvarInteger_var26
+	lda mega65_printCharFCM_rightvarInteger_var27
 	; Calling storevariable on generic assign expression
 	sta mega65_a
 	sty mega65_a+1
-	; LineNumber: 95
+	; LineNumber: 94
 	lda #$ff
 	; Calling storevariable on generic assign expression
 	sta DMA_mb1
@@ -898,542 +896,231 @@ mega65_printCharFCM_wordAdd24:
 	; Calling storevariable on generic assign expression
 	sta DMA_value
 	jsr DMA_lpoke
-	; LineNumber: 96
+	; LineNumber: 95
 	rts
 end_procedure_mega65_printCharFCM:
 	; NodeProcedureDecl -1
-	; ***********  Defining procedure : Memory_Poke32
+	; ***********  Defining procedure : keyboard_getKey
 	;    Procedure type : User-defined procedure
-	; LineNumber: 26
-Memory_Poke32_block30:
-Memory_Poke32:
-	; LineNumber: 27
-	; ****** Inline assembler section
- 
-		ldz Memory_pa
-		lda Memory_pb
-		eom 
-		sta (Memory_zpLo),z
-	
-	; LineNumber: 34
-	rts
-end_procedure_Memory_Poke32:
-	; NodeProcedureDecl -1
-	; ***********  Defining procedure : poke16
-	;    Procedure type : User-defined procedure
-	; LineNumber: 67
-	; LineNumber: 66
-pa:	.word	0
-	; LineNumber: 66
-pb:	.word	0
-	; LineNumber: 66
-val:	.word	0
-poke16_block31:
-poke16:
-	; LineNumber: 71
-	
-; //     zphi zplo
-; //     xxxx xxxx
-; // bsp$0FF8 0000	- color ram
-	lda pb
-	ldx pb+1
-	sta Memory_zpLo
-	stx Memory_zpLo+1
-	; LineNumber: 72
-	lda pa
-	ldx pa+1
-	sta Memory_zpHi
-	stx Memory_zpHi+1
-	; LineNumber: 73
-	
-; // 32 bit addressing through pointers
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta Memory_pa
-	; integer assignment NodeVar
-	ldy val+1 ; keep
-	lda val
-	; Calling storevariable on generic assign expression
-	sta DMA_val2
-	sty DMA_val2+1
-	jsr DMA_loByte
-	; Calling storevariable on generic assign expression
-	sta Memory_pb
-	jsr Memory_Poke32
-	; LineNumber: 74
-	lda #$1
-	; Calling storevariable on generic assign expression
-	sta Memory_pa
-	; integer assignment NodeVar
-	ldy val+1 ; keep
-	lda val
-	; Calling storevariable on generic assign expression
-	sta DMA_val1
-	sty DMA_val1+1
-	jsr DMA_hiByte
-	; Calling storevariable on generic assign expression
-	sta Memory_pb
-	jsr Memory_Poke32
-	; LineNumber: 75
-	rts
-end_procedure_poke16:
-	; NodeProcedureDecl -1
-	; ***********  Defining procedure : demoRRB
-	;    Procedure type : User-defined procedure
+	; LineNumber: 84
 	; LineNumber: 83
-	; LineNumber: 78
-x2:	.byte	0
-	; LineNumber: 78
-y2:	.byte	0
-	; LineNumber: 79
-ch:	.byte	0
-	; LineNumber: 80
-rampos:	.word	0
-	; LineNumber: 81
-rrbrunning:	.byte	$01
-demoRRB_block32:
-demoRRB:
+keyboard_getKeyRet:	.byte	0
+keyboard_getKey_block31:
+keyboard_getKey:
 	; LineNumber: 85
+	; ****** Inline assembler section
+		lda $D610
+		sta keyboard_getKeyRet
+		lda #$00
+		sta $D610	
 	
-; // Update RowSize
-	lda #$2d
-	; Calling storevariable on generic assign expression
-	sta mega65_RowSize
-	; LineNumber: 86
-	jsr mega65_SetRowSize
-	; LineNumber: 88
-	
-; // populate layer 0 with chars
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta ch
-	; LineNumber: 118
-	; Calling storevariable on generic assign expression
-	sta y2
-demoRRB_forloop33:
-	; LineNumber: 90
-	; LineNumber: 96
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta x2
-demoRRB_forloop54:
 	; LineNumber: 92
-	; LineNumber: 93
-	lda ch
+	; LineNumber: 92
+	lda keyboard_getKeyRet
+	rts
+end_procedure_keyboard_getKey:
+	; NodeProcedureDecl -1
+	; ***********  Defining procedure : testKeyboard
+	;    Procedure type : User-defined procedure
+	; LineNumber: 137
+	; LineNumber: 133
+k:	.byte	0
+	; LineNumber: 134
+xx:	.byte	0
+	; LineNumber: 134
+yy:	.byte	0
+	; LineNumber: 135
+caddr:	.word	0
+	; LineNumber: 136
+pp	= $02
+testKeyboard_block32:
+testKeyboard:
+	; LineNumber: 138
+testKeyboard_while33:
+testKeyboard_loopstart37:
+	; Binary clause Simplified: NOTEQUALS
+	lda #$1
+	; Compare with pure num / var optimization
+	cmp #$0;keep
+	beq testKeyboard_localfailed88
+	jmp testKeyboard_ConditionalTrueBlock34
+testKeyboard_localfailed88:
+	jmp testKeyboard_elsedoneblock36
+testKeyboard_ConditionalTrueBlock34: ;Main true block ;keep:
+	; LineNumber: 138
+	; LineNumber: 140
+	jsr keyboard_getKey
+	; Calling storevariable on generic assign expression
+	sta k
+	; LineNumber: 141
+	; Binary clause Simplified: EQUALS
+	; Compare with pure num / var optimization
+	cmp #$9d;keep
+	bne testKeyboard_elsedoneblock93
+testKeyboard_ConditionalTrueBlock91: ;Main true block ;keep:
+	; LineNumber: 142
+	; LineNumber: 143
+	; Test Inc dec D
+	dec xx
+	; LineNumber: 144
+	jmp testKeyboard_loopstart37
+	; LineNumber: 145
+testKeyboard_elsedoneblock93:
+	; LineNumber: 146
+	; Binary clause Simplified: EQUALS
+	lda k
+	; Compare with pure num / var optimization
+	cmp #$1d;keep
+	bne testKeyboard_elsedoneblock99
+testKeyboard_ConditionalTrueBlock97: ;Main true block ;keep:
+	; LineNumber: 147
+	; LineNumber: 148
+	; Test Inc dec D
+	inc xx
+	; LineNumber: 149
+	jmp testKeyboard_loopstart37
+	; LineNumber: 150
+testKeyboard_elsedoneblock99:
+	; LineNumber: 151
+	; Binary clause Simplified: EQUALS
+	lda k
+	; Compare with pure num / var optimization
+	cmp #$11;keep
+	bne testKeyboard_elsedoneblock105
+testKeyboard_ConditionalTrueBlock103: ;Main true block ;keep:
+	; LineNumber: 152
+	; LineNumber: 153
+	; Test Inc dec D
+	inc yy
+	; LineNumber: 154
+	jmp testKeyboard_loopstart37
+	; LineNumber: 155
+testKeyboard_elsedoneblock105:
+	; LineNumber: 156
+	; Binary clause Simplified: EQUALS
+	lda k
+	; Compare with pure num / var optimization
+	cmp #$91;keep
+	bne testKeyboard_elsedoneblock111
+testKeyboard_ConditionalTrueBlock109: ;Main true block ;keep:
+	; LineNumber: 157
+	; LineNumber: 158
+	; Test Inc dec D
+	dec yy
+	; LineNumber: 159
+	jmp testKeyboard_loopstart37
+	; LineNumber: 160
+testKeyboard_elsedoneblock111:
+	; LineNumber: 161
+	; Binary clause Simplified: EQUALS
+	lda k
+	; Compare with pure num / var optimization
+	cmp #$20;keep
+	bne testKeyboard_elsedoneblock117
+testKeyboard_ConditionalTrueBlock115: ;Main true block ;keep:
+	; LineNumber: 162
+	; LineNumber: 163
+	; Test Inc dec D
+	inc xx
+	; LineNumber: 164
+	jmp testKeyboard_loopstart37
+	; LineNumber: 165
+testKeyboard_elsedoneblock117:
+	; LineNumber: 166
+	; Binary clause Simplified: EQUALS
+	lda k
+	; Compare with pure num / var optimization
+	cmp #$d;keep
+	bne testKeyboard_elsedoneblock123
+testKeyboard_ConditionalTrueBlock121: ;Main true block ;keep:
+	; LineNumber: 167
+	; LineNumber: 168
+	lda #$0
+	; Calling storevariable on generic assign expression
+	sta xx
+	; LineNumber: 169
+	; Test Inc dec D
+	inc yy
+	; LineNumber: 170
+	jmp testKeyboard_loopstart37
+	; LineNumber: 171
+testKeyboard_elsedoneblock123:
+	; LineNumber: 172
+	; Binary clause Simplified: EQUALS
+	lda k
+	; Compare with pure num / var optimization
+	cmp #$5f;keep
+	bne testKeyboard_elsedoneblock129
+testKeyboard_ConditionalTrueBlock127: ;Main true block ;keep:
+	; LineNumber: 172
+	; LineNumber: 174
+	; Test Inc dec D
+	dec xx
+	; LineNumber: 175
+	lda #$20
 	; Calling storevariable on generic assign expression
 	sta mega65_ch
-	lda #$6
+	lda #$0
 	; Calling storevariable on generic assign expression
 	sta mega65_color
-	lda x2
+	lda xx
 	; Calling storevariable on generic assign expression
 	sta mega65_x
 	sty mega65_x+1
-	lda y2
+	lda yy
 	; Calling storevariable on generic assign expression
 	sta mega65_y
 	sty mega65_y+1
 	jsr mega65_printCharFCM
-	; LineNumber: 94
-	; Test Inc dec D
-	inc ch
-	; LineNumber: 95
-demoRRB_forloopcounter56:
-demoRRB_loopstart57:
-	; Compare is onpage
-	; Test Inc dec D
-	inc x2
-	lda #$27
-	cmp x2 ;keep
-	bne demoRRB_forloop54
-demoRRB_loopdone61: ;keep:
-demoRRB_forloopend55:
-demoRRB_loopend58:
-	; LineNumber: 97
-	
-; // Add GOTOX|TRANSPARENT into colorram
-	; Generic 16 bit op
-	ldy #0
-	lda #80
-demoRRB_rightvarInteger_var64 = $54
-	sta demoRRB_rightvarInteger_var64
-	sty demoRRB_rightvarInteger_var64+1
-	; Mul 16x8 setup
-	ldy #0
-	lda y2
-	sta mul16x8_num1
-	sty mul16x8_num1Hi
-	ldy mega65_LogicalRowSize+1
-	lda mega65_LogicalRowSize
-	sta mul16x8_num2
-	jsr mul16x8_procedure
-	; Low bit binop:
-	clc
-	adc demoRRB_rightvarInteger_var64
-demoRRB_wordAdd62:
-	sta demoRRB_rightvarInteger_var64
-	; High-bit binop
-	tya
-	adc demoRRB_rightvarInteger_var64+1
-	tay
-	lda demoRRB_rightvarInteger_var64
-	; Calling storevariable on generic assign expression
-	sta rampos
-	sty rampos+1
-	; LineNumber: 99
-	
-; //DMA::lpoke($ff,$08,rampos,RRB::GOTOX|RRB::TRANSPARENT);
-	; Integer constant assigning
-	ldy #$0f
-	lda #$f8
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$90
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 101
-	
-; // save ram position 	
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	pha
-	lda y2
-	asl
-	tax
-	pla
-	sta sprAddr,x
-	tya
-	sta sprAddr+1,x
-	; LineNumber: 103
-	
-; // New Position of "Sprite"
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$5
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	; Load Integer array
-	lda y2
-	asl
-	tax
-	lda sprPos,x
-	ldy sprPos+1,x
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 105
-	
-; // Draw new Char - "Sprite"
-	lda rampos
-	clc
-	adc #$02
-	sta rampos+0
-	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
-	bcc demoRRB_WordAdd65
-	inc rampos+1
-demoRRB_WordAdd65:
-	; LineNumber: 106
-	; Integer constant assigning
-	ldy #$0f
-	lda #$f8
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	; Integer constant assigning
-	ldy #$04
-	lda #$00
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 107
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$5
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$2
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 109
-	
-; // RRB GotoX 320
-	lda rampos
-	clc
-	adc #$02
-	sta rampos+0
-	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
-	bcc demoRRB_WordAdd66
-	inc rampos+1
-demoRRB_WordAdd66:
-	; LineNumber: 110
-	; Integer constant assigning
-	ldy #$0f
-	lda #$f8
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$10
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 111
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$5
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	; Integer constant assigning
-	ldy #$01
-	lda #$40
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 113
-	
-; // RRB GotoX 320 - finish char
-	lda rampos
-	clc
-	adc #$02
-	sta rampos+0
-	; Optimization : A := A op 8 bit - var and bvar are the same - perform inc
-	bcc demoRRB_WordAdd67
-	inc rampos+1
-demoRRB_WordAdd67:
-	; LineNumber: 114
-	; Integer constant assigning
-	ldy #$0f
-	lda #$f8
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 115
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$5
-	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; integer assignment NodeVar
-	ldy rampos+1 ; keep
-	lda rampos
-	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 117
-demoRRB_forloopcounter35:
-demoRRB_loopstart36:
-	; Test Inc dec D
-	inc y2
-	lda #$18
-	cmp y2 ;keep
-	beq demoRRB_loopdone68
-demoRRB_loopnotdone69:
-	jmp demoRRB_forloop33
-demoRRB_loopdone68:
-demoRRB_forloopend34:
-demoRRB_loopend37:
-	; LineNumber: 118
-demoRRB_while70:
-demoRRB_loopstart74:
+	; LineNumber: 176
+	jmp testKeyboard_loopstart37
+	; LineNumber: 177
+testKeyboard_elsedoneblock129:
+	; LineNumber: 178
 	; Binary clause Simplified: NOTEQUALS
-	lda rrbrunning
+	lda k
 	; Compare with pure num / var optimization
 	cmp #$0;keep
-	beq demoRRB_localfailed102
-	jmp demoRRB_ConditionalTrueBlock71
-demoRRB_localfailed102:
-	jmp demoRRB_elsedoneblock73
-demoRRB_ConditionalTrueBlock71: ;Main true block ;keep:
-	; LineNumber: 119
-	; LineNumber: 120
-	; wait for raster
-	ldx #$ff ; optimized, look out for bugs
-	cpx $d012
-	bne *-3
-	; LineNumber: 128
-	lda #$0
-	; Calling storevariable on generic assign expression
-	sta y2
-demoRRB_forloop104:
-	; LineNumber: 122
-	; LineNumber: 123
-	; HandleVarBinopB16bit
-	; RHS is pure, optimization
-	; Load Integer array
-	lda y2
-	asl
-	tax
-	lda sprPos,x
-	ldy sprPos+1,x
-	clc
-	adc #$01
-	; Testing for byte:  #$00
-	; RHS is word, no optimization
-	pha 
-	tya 
-	adc #$00
-	tay 
-	pla 
-	; Calling storevariable on generic assign expression
-	pha
-	lda y2
-	asl
-	tax
-	pla
-	sta sprPos,x
-	tya
-	sta sprPos+1,x
-	; LineNumber: 124
-	; Binary clause INTEGER: GREATER
-	; Load Integer array
-	lda y2
-	asl
-	tax
-	lda sprPos,x
-	ldy sprPos+1,x
-demoRRB_rightvarInteger_var125 = $5A
-	sta demoRRB_rightvarInteger_var125
-	sty demoRRB_rightvarInteger_var125+1
-	; Compare INTEGER with pure num / var optimization. GREATER. 
-	lda demoRRB_rightvarInteger_var125+1   ; compare high bytes
-	cmp #$01 ;keep
-	bcc demoRRB_elsedoneblock123
-	bne demoRRB_ConditionalTrueBlock121
-	lda demoRRB_rightvarInteger_var125
-	cmp #$40 ;keep
-	bcc demoRRB_elsedoneblock123
-	beq demoRRB_elsedoneblock123
-demoRRB_ConditionalTrueBlock121: ;Main true block ;keep:
-	; LineNumber: 124
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
-	lda #$0
-	; Calling storevariable on generic assign expression
-	pha
-	lda y2
-	asl
-	tax
-	pla
-	sta sprPos,x
-	tya
-	sta sprPos+1,x
-demoRRB_elsedoneblock123:
-	; LineNumber: 126
-	ldy #0   ; Force integer assignment, set y = 0 for values lower than 255
+	beq testKeyboard_elsedoneblock135
+testKeyboard_ConditionalTrueBlock133: ;Main true block ;keep:
+	; LineNumber: 179
+	; LineNumber: 180
+	; Optimizer: a = a +/- b
+	lda k
+	sec
+	sbc #$60
+	sta mega65_ch
 	lda #$5
 	; Calling storevariable on generic assign expression
-	sta pa
-	sty pa+1
-	; Load Integer array
-	lda y2
-	asl
-	tax
-	lda sprAddr,x
-	ldy sprAddr+1,x
+	sta mega65_color
+	lda xx
 	; Calling storevariable on generic assign expression
-	sta pb
-	sty pb+1
-	; Load Integer array
-	lda y2
-	asl
-	tax
-	lda sprPos,x
-	ldy sprPos+1,x
+	sta mega65_x
+	sty mega65_x+1
+	lda yy
 	; Calling storevariable on generic assign expression
-	sta val
-	sty val+1
-	jsr poke16
-	; LineNumber: 127
-demoRRB_forloopcounter106:
-demoRRB_loopstart107:
+	sta mega65_y
+	sty mega65_y+1
+	jsr mega65_printCharFCM
+	; LineNumber: 181
 	; Test Inc dec D
-	inc y2
-	lda #$18
-	cmp y2 ;keep
-	beq demoRRB_loopdone127
-demoRRB_loopnotdone128:
-	jmp demoRRB_forloop104
-demoRRB_loopdone127:
-demoRRB_forloopend105:
-demoRRB_loopend108:
-	; LineNumber: 128
-	jmp demoRRB_while70
-demoRRB_elsedoneblock73:
-demoRRB_loopend75:
-	; LineNumber: 129
+	inc xx
+	; LineNumber: 182
+testKeyboard_elsedoneblock135:
+	; LineNumber: 183
+	jmp testKeyboard_while33
+testKeyboard_elsedoneblock36:
+testKeyboard_loopend38:
+	; LineNumber: 184
 	rts
-end_procedure_demoRRB:
+end_procedure_testKeyboard:
 block1:
 main_block_begin_:
-	; LineNumber: 132
+	; LineNumber: 187
+	jsr mega65_init
+	; LineNumber: 188
 	jsr mega65_setFCM
-	; LineNumber: 133
+	; LineNumber: 189
 	lda #$5
 	; Calling storevariable on generic assign expression
 	sta mega65_b
@@ -1443,7 +1130,7 @@ main_block_begin_:
 	sta mega65_addr
 	sty mega65_addr+1
 	jsr mega65_relocateScreen
-	; LineNumber: 135
+	; LineNumber: 191
 	lda #$0
 	; Calling storevariable on generic assign expression
 	sta DMA_dmb1
@@ -1464,7 +1151,7 @@ main_block_begin_:
 	sta DMA_count2
 	sty DMA_count2+1
 	jsr DMA_lfill
-	; LineNumber: 136
+	; LineNumber: 192
 	lda #$ff
 	; Calling storevariable on generic assign expression
 	sta DMA_dmb1
@@ -1485,7 +1172,7 @@ main_block_begin_:
 	sta DMA_count2
 	sty DMA_count2+1
 	jsr DMA_lfill
-	; LineNumber: 137
+	; LineNumber: 193
 	lda #$0
 	; Calling storevariable on generic assign expression
 	sta DMA_dmb1
@@ -1506,7 +1193,7 @@ main_block_begin_:
 	sta DMA_count2
 	sty DMA_count2+1
 	jsr DMA_lfill
-	; LineNumber: 147
+	; LineNumber: 206
 	
 ; // uncomment next 4 lines for tile demo_LogicalRowSize
 ; // mega65::SetRowSize();
@@ -1515,8 +1202,15 @@ main_block_begin_:
 ; // initTiles();
 ; // demoDrawTiles();
 ; // RRB Demo
-	jsr demoRRB
-	; LineNumber: 150
+; //	demoRRB();
+; // Keyboard Demo - input 
+	lda #$28
+	; Calling storevariable on generic assign expression
+	sta mega65_newRowSize
+	jsr mega65_SetRowSize
+	; LineNumber: 207
+	jsr testKeyboard
+	; LineNumber: 208
 main_block_end_:
 	; End of program
 	; Ending memory block at $2001

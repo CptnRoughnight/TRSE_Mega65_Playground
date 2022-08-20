@@ -14,44 +14,42 @@ var RowSize : byte = 40;
 @donotremove LogicalRowSize
 
 
-procedure setFCM();
+procedure init();
 begin
 	asm("
-		sei
+		sei 
 		lda #$35
 		sta $01
 		
+		; enable 40 mhz
 		lda #$41
 		sta $00
 		
-		lda #$00
-		tax
-		tay
-		taz
-		map
-		eom
-		
-		lda #$47
-		sta $d02f
-		lda #$53
-		sta $d02f
-		
-		lda #$7f
-		sta $dc0d
-		sta $dd0d
-		
+		; disable C65 ROM
 		lda #$70
 		sta $d640
 		eom
-		
-		lda #$00
-		sta $d01a
-		
+		; unmap C65 rom
 		lda #%11111000
 		trb $d030
 		
+		; disable CIA interrupts
+		lda $7f
+		sta $dc0d
+		sta $dd0d
+		
+		; disable IRQ interrupts
+		lda #$00
+		sta $d01a
 		cli
 		
+	");
+end;
+
+
+procedure setFCM();
+begin
+	asm("
 		lda #%00000111
 		trb $d016
 		
@@ -78,8 +76,9 @@ begin
 	POKE(^$D062,0,b);
 end;
 
-procedure SetRowSize();
+procedure SetRowSize(newRowSize:byte);
 begin
+	RowSize:=newRowSize;
 	LogicalRowSize := RowSize*2;
 	POKE(^$D05E,0,RowSize);
 	POKE(^$D059,0,(LogicalRowSize>>8));

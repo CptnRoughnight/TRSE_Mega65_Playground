@@ -1,0 +1,94 @@
+unit keyboard;
+
+var	const RIGHT_SHIFT 	: byte = 2;
+	const LEFT_SHIFT  	: byte = 1;
+	const CTRL		  	: byte = 4;
+//	const MEGA		  	: byte = $08;		// has to be tested on real hardware
+	const ALT		  	: byte = 8;
+//	const NOSCROLL	  	: byte = $20;		// has to be tested on real hardware
+//	const CAPSLOCK	  	: byte = $40;		// has to be tested on real hardware
+	
+	const INSTDEL 		: byte = $14;
+	const RET     		: byte = 13;
+	const SPACE   		: byte = 32;
+	const BACKSPACE 	: byte = $5F;
+	const RIGHT   		: byte = 29;
+	const DOWN	  		: byte = 17;
+	const UP	  		: byte = 145;
+	const LEFT    		: byte = 157;
+	
+	const F1 	  		: byte = 241;
+	const F2 	  		: byte = 242;
+	const F3 	  		: byte = 243;
+	const F4 	  		: byte = 244;
+	const F5 	  		: byte = 245;
+	const F6 	  		: byte = 246;
+	const F7 	  		: byte = 247;
+	const F8 	  		: byte = 248;
+	const F9 	  		: byte = 249;
+	const F10 	  		: byte = 250;
+	
+	const N0	  		: byte = 48;
+	const N1	  		: byte = 49;
+	const N2	  		: byte = 50;
+	const N3	  		: byte = 51;
+	const N4	  		: byte = 52;
+	const N5	  		: byte = 53;
+	const N6	  		: byte = 54;
+	const N7	  		: byte = 55;
+	const N8	  		: byte = 56;
+	const N9	  		: byte = 57;
+	
+	const A		  		: byte = 97;
+	const B		  		: byte = 98;
+	const C		  		: byte = 99;
+	const D		  		: byte = 100;
+	const E		  		: byte = 101;
+	const F		  		: byte = 102;
+	const G		  		: byte = 103;
+	const H		  		: byte = 104;
+	const I		  		: byte = 105;
+	const J		  		: byte = 106;
+	const K		  		: byte = 107;
+	const L		  		: byte = 108;
+	const M		  		: byte = 109;
+	const N		  		: byte = 110;
+	const O		  		: byte = 111;
+	const P		  		: byte = 112;
+	const Q		  		: byte = 113;
+	const R		  		: byte = 114;
+	const S		  		: byte = 115;
+	const T		  		: byte = 116;
+	const U		  		: byte = 117;
+	const V		  		: byte = 118;
+	const W		  		: byte = 119;
+	const X		  		: byte = 120;
+	const Y		  		: byte = 121;
+	const Z		  		: byte = 122;
+
+
+
+function getSpecialKey() : byte;
+var getSpecialKeyRet : byte;
+begin
+	asm("
+		lda $D611
+		sta keyboard_getSpecialKeyRet
+	");
+	getSpecialKey := getSpecialKeyRet;
+
+end;
+
+function getKey() : byte;
+var getKeyRet : byte;
+begin
+	asm("
+		lda $D610
+		sta keyboard_getKeyRet
+		lda #$00
+		sta $D610	
+	");
+	getKey := getKeyRet;
+end;
+
+end.
