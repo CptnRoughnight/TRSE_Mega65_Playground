@@ -67,6 +67,7 @@ var	const RIGHT_SHIFT 	: byte = 2;
 	const Z		  		: byte = 122;
 
 
+
 function getSpecialKey() : byte;
 var getSpecialKeyRet : byte;
 begin
@@ -88,15 +89,6 @@ begin
 		sta $D610	
 	");
 	getKey := getKeyRet;
-end;
-
-procedure waitKey();
-begin
-	asm("
-	waitforkey:
-		lda $D610
-		beq waitforkey
-	");	
 end;
 
 end.

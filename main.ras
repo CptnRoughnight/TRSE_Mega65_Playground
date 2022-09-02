@@ -1,17 +1,14 @@
 program HelloWorld;
-
 @use "mega65"
 @use "palettes"
 @use "DMA"
 @use "RRB"
 @use "keyboard"
-@use "fileio"
-
-
+ 
+ @use "memory"
  @use "Screen"
  
 var
-	
 	blah : byte = 1;
 	test : byte  = 0;
 	
@@ -21,61 +18,23 @@ var
 	sprAddr : array[25] of integer at $3000;
 	sprPos : array[25] of integer = ( 10,200,30,66,70,120,2,90,55,250,10,200,30,66,70,120,2,90,55,250,10,200,30,66,70 );
 	
-	sprites : array[64] of byte;
-
-
-	tile1 : array[64] of byte = (
-  $69,$69,$6A,$69,$69,$69,$69,$6A,$69,$69,$69,$69,$69,$6A,$69,$69,$4A,$4A,$4A,$69,$69,$69,$69,$4A,$4B,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A ); 
-	tile2 : array[64] of byte = (
-  $4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4B,$4A,$4A,$4B,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A,$4A );
-	tile3 : array[64] of byte = (
-  $6,$6,$7,$7,$7,$7,$6,$6,$6,$7,$9,$9,$9,$9,$7,$6,$7,$9,$9,$9,$9,$5,$5,$7,$7,$9,$9,$9,$5,$5,$5,$7,$7,$9,$9,$5,$5,$5,$5,$7,$7,$9,$9,$5,$5,$5,$5,$7,$6,$7,$5,$5,$5,$5,$7,$6,$6,$6,$7,$7,$7,$7,$6,$6);
-
-	sprite : array[64] of byte = (
-	$00,$00,$00,$71,$71,$00,$00,$00,$00,$00,$71,$C8,$C8,$71,$00,$00,$00,$00,$71,$C8,$C8,$71,$00,$00,$00,$00,$00,$71,$71,$00,$00,$00,$E8,$00,$E8,$D4,$D4,$E8,$00,$E8,$00,$E8,$D6,$D4,$D4,$D5,$E8,$00,$00,$E8,$D6,$D4,$D4,$D5,$E8,$00,$00,$00,$E8,$E8,$E8,$E8,$00,$00
-	);
-	
-	tilemap : array[1000] of byte = (
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,2,2,2,2,1,1,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,2,2,2,2,2,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,
-1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,2,
-2,2,2,2,2,1,1,1,1,0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,1,1,1,0,0,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,0,0,0,1,1,1,2,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,
-2,2,2,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,2,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,2,2,2,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,2,2,2,2,2,
-2,2,2,2,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,2,2,2,2,
-2,2,2,2,2,2,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,2,2,2,2,
-2,2,2,2,2,2,2,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,2,2,2,3,3,3,3,2,2,2,2,2,
-2,2,2,2,2,2,2,2,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
-) ;
-
 
 	
-	mapwidth : integer = 40;
-	mapheight : integer = 25;
-	
+procedure waitKey();
+begin
+	asm("
+	waitforkey:
+		lda $D610
+		beq waitforkey
+	");	
+end;
+
 // set tiles 2048 to 256 colors 
 procedure initTiles();
 var	col : byte;
-	addr1:integer;
-	
+addr1:integer;
 begin
 	addr1 := $0000;
-
 	col := 0;
 	for x := 0 to 255 do
 	begin
@@ -83,24 +42,6 @@ begin
 		col := col + 1;
 		addr1 := addr1 + 64;
 	end;	
-	addr1 := $0000;
-	for col := 0 to 64 do
-	begin
-		DMA::lpoke($00,$02,addr1+col,tile1[col]);
-		DMA::lpoke($00,$02,addr1+64+col,tile2[col]);
-		DMA::lpoke($00,$02,addr1+128+col,tile3[col]);
-	end;
-	
-	// Sprites
-	addr1 := $0100;
-	for x := 0 to 32 do
-	begin
-		for col := 0 to 64 do
-		begin
-			DMA::lpoke($00,$02,addr1+col,sprite[col]);
-		end;
-		addr1 := addr1 + 128;
-	end;
 end;
 
 procedure demoDrawTiles();
@@ -121,69 +62,69 @@ begin
 				t := 2048;
 		end;
 	end;
-	keyboard::waitKey();
+	waitKey();
+end;
+
+procedure poke16(pa,pb : integer;val:integer);
+begin
+	//     zphi zplo
+	//     xxxx xxxx
+	// bsp$0FF8 0000	- color ram
+	Memory::zpLo := pb;  
+	Memory::zpHi := pa; // 32 bit addressing through pointers
+	Memory::Poke32(0,DMA::loByte(val));
+	Memory::Poke32(1,DMA::hiByte(val));
 end;
 
 procedure demoRRB();
 var x2,y2 : byte;
 	ch : byte;
 	rampos : integer;
-	charram : integer;
 	rrbrunning : byte = 1;
-	p : pointer;
-	tmpos : integer;
 
 begin
 	// Update RowSize
-	mega65::RowSize := 44;
-	mega65::SetRowSize(44);
+	mega65::RowSize := 45;
+	mega65::SetRowSize();
 	// populate layer 0 with chars
 	ch := 0;
-	p := #tilemap;
-	charram := 2047;
-	for y2 := 0 to 25 do
+	for y2 := 0 to 24 do
 	begin
-		rampos := y2 * mega65::LogicalRowSize;
-		for	x2 := 0 to 40 do
+		for	x2 := 0 to 39 do
 		begin
-			DMA::poke16($0005,rampos+x2*2,p[0]+2047);
-//			DMA::poke16($0005,rampos+x2*2,charram);
-			p := p + 1;
-			/*charram := charram + 1;
-			if (charram > 2048+255) then
-				charram := 2047;*/
+			mega65::printCharFCM(ch,6,x2,y2);
+			ch := ch + 1;
 		end;
 		// Add GOTOX|TRANSPARENT into colorram
-		//rampos := y2 * mega65::LogicalRowSize + 40*2;
-		rampos := rampos + 80;
-		DMA::poke16($0FF8,rampos,RRB::GOTOX|RRB::TRANSPARENT);
+		rampos := y2 * mega65::LogicalRowSize + 40*2;
+		poke16($0FF8,rampos,RRB::GOTOX|RRB::TRANSPARENT);
 		// save ram position 	
-		sprAddr[y2] := y2 * mega65::LogicalRowSize + 40*2;
+		sprAddr[y2] := rampos;
 		// New Position of "Sprite"
-		DMA::poke16($0005,rampos,sprPos[y2]);
+		poke16($0005,rampos,sprPos[y2]);
 		// Draw new Char - "Sprite"
 		rampos := rampos + 2;
-		DMA::poke16($0ff8,rampos,1024);
-		DMA::poke16($0005,rampos,2);
+		poke16($0ff8,rampos,1024);
+		poke16($0005,rampos,2);
 		// RRB GotoX 320
 		rampos := rampos + 2;
-		DMA::poke16($0ff8,rampos,RRB::GOTOX);
-		DMA::poke16($0005,rampos,320);
+		poke16($0ff8,rampos,RRB::GOTOX);
+		poke16($0005,rampos,320);
 		// RRB GotoX 320 - finish char
 		rampos := rampos + 2;
-		DMA::poke16($0ff8,rampos,$00);
-		DMA::poke16($0005,rampos,$00);
+		poke16($0ff8,rampos,$00);
+		poke16($0005,rampos,$00);
 		
 	end;
 	while(rrbrunning) do
 	begin
-		waitforraster(0);
-		for y2:=0 to 25 do
+		waitforraster(255);
+		for y2:=0 to 24 do
 		begin
 			sprPos[y2]:=sprPos[y2]+1;
 			if (sprPos[y2]>320)then
 				sprPos[y2] := 0;
-			DMA::poke16($0005,sprAddr[y2],sprPos[y2]);
+			poke16($0005,sprAddr[y2],sprPos[y2]);
 		end;
 	end;
 end;
@@ -242,37 +183,6 @@ begin
 	end;
 end;
 
-procedure CopyData();
-var index : integer;
-	p : pointer;
-begin
-	// Copy sprites to $1F000	
-	addr := $F000;
-	for blah := 0 to 64 do
-	begin
-		// lpoke(mb1:byte;b1:byte;addr1:integer;value:byte);
-		DMA::lpoke(0,$01,addr,sprite[blah]);
-		addr := addr + 1;
-	end;
-	
-	// Copy Map to $10000
-	addr := $0000;
-	p := #tilemap;
-	for x := 0 to 1000 do
-	begin
-		index := 2047 + p[0];
-		p := p + 1;
-		//DMA::lpoke(0,$01,addr,lo(index));
-		DMA::poke16($0001,addr,index);
-		addr := addr + 2;
-/*		addr := addr + 1; 
-		DMA::lpoke(0,$01,addr,hi(index));		*/
-	end;
-end;
-
-var sprCount : byte;
-	k : byte;
-
 begin
 	mega65::init();
 	mega65::setFCM();
@@ -284,71 +194,15 @@ begin
 	
 	// uncomment next 4 lines for tile demo_LogicalRowSize
 	// mega65::SetRowSize();
-	// palettes::InitPalette();			// for chars (demoRRB) the palette doesnt fit, as the first 16 colors are grey shades
+	// palettes::InitPalette();			// for chars (demoRRB) the palette doesnt fit, as the first 16 colors a grey shades
 	// initTiles();
 	// demoDrawTiles();
 	
 	
 	// RRB Demo
-//	palettes::InitPalette();			
-//	initTiles();
-//	poke(^$D021,0,19);
-//	demoRRB();
+	//	demoRRB();
 	
 	// Keyboard Demo - input 
-	//mega65::SetRowSize(40);
-	//testKeyboard();	
-	
-	//palettes::InitPalette();
-	//mega65::SetRowSize(40);
-	//SmootScrollDemo();
-	
-	palettes::InitPalette();			
-	initTiles();
-	poke(^$D021,0,22);
-	
-	CopyData();
-	
-//	DMA::lcopy($00,$01,$0000,$00,$05,$0000,1000);
-	
-	
-	RRB::addTileLayer($01,$0000,40,2048);
-	for sprCount := 0 to 18 do
-	begin
-		k := sprCount * 2;
-		sprites[sprCount] := RRB::addSpriteLayer(5+k,$01,$F000);		
-		RRB::spriteX[sprCount] := 10+sprCount*9;
-		RRB::spriteY[sprCount] := 170;
-
-	end;
-	
-	RRB::CreateRRB();
-				
-	while (1) do
-	begin
-		waitforraster(0);
-		asm ("
-			lda #23
-			sta $D020
-		");
-		
-		for sprCount := 0 to 18 do
-		begin
-			RRB::UpdateSprite(sprCount);
-
-			RRB::spriteY[sprCount] := RRB::spriteY[sprCount] + 1;
-			if (RRB::spriteY[sprCount]>200) then
-				RRB::spriteY[sprCount] := 0;
-				
-
-			RRB::spriteX[sprCount] := RRB::spriteX[sprCount] + 1;
-			if (RRB::spriteX[sprCount]>320) then
-				RRB::spriteX[sprCount] := 0;
-		end;	
-		asm ("
-			lda #00
-			sta $D020
-		");
-	end;
-	
+	mega65::SetRowSize(40);
+	testKeyboard();	
 end.
