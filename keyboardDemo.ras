@@ -1,0 +1,26 @@
+/******************************************************************** 
+	keyboardDemo
+	
+	some routines for handling the keyboard - testing phase
+	don't know if its necessary, but I use these projectsettings
+	to learn about the mega65
+ ******************************************************************** 
+
+ ********************************************************************/
+program keyboardDemo;
+
+@use "keyboard"
+
+var key : byte;
+
+begin
+	SCREEN_CHAR_LOC:=$0800;
+	while (1) do
+	begin
+		key := keyboard::getKey();
+		if (key<>0) then
+		begin 
+			SCREEN_CHAR_LOC^:= key;
+		end;
+	end;	
+end.

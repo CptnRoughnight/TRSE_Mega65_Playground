@@ -1,0 +1,42 @@
+program testarray;
+
+@use "DMA"
+@use "mega65"
+
+var a : array[50] of integer at $3000;
+	pa : pointer of integer;
+	
+	index : integer;
+	
+begin
+	/*	mega65::init();
+	mega65::setFCM();*/
+	mega65::io_enable();
+/*	pa := #a;
+	pa^:= $01;
+	pa := pa + 1;
+	pa^:= $02;*/
+	a[0] := 1;//$0001;
+	
+	pa := #a;
+	index := pa[0] + 2047;
+	
+	
+	DMA::lfill($00,$05,$0000,$22,1000);
+/*	for index := 0 to 1000  do
+	begin
+		DMA::lpoke($00,$05,$0000+index,$22);
+	end;*/
+	
+//	DMA::lcopy($00,$05,$0000,$f0,$f8,$0000,1000);
+//	DMA::lcopy($ff,$08,$0000,$00,$05,$0000,1000);
+	
+	//  lfill(dmb1:byte;db1:byte;daddr1:integer;value1:byte;count2:integer) ;
+	DMA::lfill($ff,$08,$0000,8,1000);
+//	DMA::lpoke($00,$00,$0800,65);
+	
+//	DMA::lpoke($00,$05,$0000,DMA::loByte(index));
+//	DMA::lpoke($00,$05,$0001,DMA::hiByte(index));
+	
+	loop();
+end.

@@ -67,6 +67,12 @@ var	const RIGHT_SHIFT 	: byte = 2;
 	const Z		  		: byte = 122;
 
 
+/******************************************************************** 
+	getSpecialKey
+	checks if a special key was pressed
+ ******************************************************************** 
+
+ ********************************************************************/
 
 function getSpecialKey() : byte;
 var getSpecialKeyRet : byte;
@@ -79,16 +85,38 @@ begin
 
 end;
 
+/******************************************************************** 
+	getKey
+	checks if a key was pressed
+ ******************************************************************** 
+
+ ********************************************************************/
+
 function getKey() : byte;
 var getKeyRet : byte;
 begin
 	asm("
 		lda $D610
-		sta keyboard_getKeyRet
+		sta localVariable_keyboard_getKey_keyboard_getKeyRet
 		lda #$00
 		sta $D610	
 	");
 	getKey := getKeyRet;
+end;
+
+/******************************************************************** 
+	waitKey
+	waits for a key press
+ ******************************************************************** 
+
+ ********************************************************************/
+procedure waitKey();
+begin
+	asm("
+	waitforkey:
+		lda $D610
+		beq waitforkey
+	");	
 end;
 
 end.

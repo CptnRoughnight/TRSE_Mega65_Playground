@@ -1,7 +1,314 @@
 unit RRB;
 
-var const GOTOX : byte = $10;
-	const TRANSPARENT : byte = $80;
+@use "DMA"
+@use "mega65"
+
+var 	const MAXSPRITE : byte = 29;	// 0..29 - 30 SPRITES PER ROW MAX, cause FCM, NCM will follow with more Sprites
+	maxSpritesPerRow : byte = 0;
+	
+
+	// look up tables
+	rrbModLookUp : array[200] of byte;
+	rrbRowLookUp : array[200] of byte;
+	rrbSprRowLookUp : array[MAXSPRITE+1] of byte;
+	rrbOffsetLookUp : array[8] of byte;
+	scrMemRowLookUp : array[25] of integer;
+
+	// Addresses
+	tileLayerAddr : integer;
+	tileLayerBank : byte;
+	tileLayerWidth : integer;
+	
+	screenMapBank : byte;
+	screenMapAddress : integer;
+	
+	colorMapBank : byte;
+	colorMapAddress : integer;
+	
+	sprDataBank : byte;
+	sprDataAddress : integer;
+	
+	transparentTile : integer;
+	screenSize : integer;
+	
 
 
+/******************************************************************** 
+	setTransparentTile 
+ ******************************************************************** 
+	defines the transparent tile
+	
+	e.g. t=2048 
+ ********************************************************************/	
+procedure setTransparentTile(t : integer);
+begin
+	transparentTile := t;
+end;
+
+/******************************************************************** 
+	copySpriteTileOffset 
+ ******************************************************************** 
+	In order to put a sprite off grid you have to use 2 tiles and
+	copy the original sprite data in these tiles 
+	
+	e.g. sprNum=2052 
+ ********************************************************************/	
+procedure copySpriteTileOffset(sprNum : integer;_offset : byte;);
+begin
+	// lfill(dmb1:byte;db1:byte;daddr1:integer;value1:byte;count2:integer)
+	DMA::lfill(0,$02,sprNum,$00,128);
+	// copy sprite tile data with offset (_offset) to this space
+	// Sprite Data at $1F000
+	DMA::lcopy(0,sprDataBank,sprDataAddress,0,2,sprNum+ rrbOffsetLookUp[_offset],64);
+end;
+
+/******************************************************************** 
+	myMod 
+ ******************************************************************** 
+	calcs the modulo of num%modulus
+	- just a test, don't know if it's faster than mod
+	
+	e.g. num=6,modulus=8 => 6 
+ ********************************************************************/	
+function myMod(num:byte;modulus : byte) : byte;
+var ret : byte;
+begin
+	asm("
+		lda localVariable_RRB_myMod_RRB_num
+		sec
+	modu:
+		sbc localVariable_RRB_myMod_RRB_modulus
+		bcs modu
+		adc localVariable_RRB_myMod_RRB_modulus
+		sta localVariable_RRB_myMod_RRB_ret
+		
+	");	
+	myMod := ret;
+end;
+
+
+/******************************************************************** 
+	UpdateSprite 
+ ******************************************************************** 
+	Updates the Sprite in the RRB
+	
+	tilenum	 		- sprite tile e.g. 2052
+	sprNum			- sprite num normalized e.g. 0
+	lastrow			- lastrow of the sprite
+	x				- new x position of sprite
+	y				- new y position of sprite
+	rrbIndex			- Raster Rewrite Buffer Index of Sprite
+ ********************************************************************/	
+procedure UpdateSprite(tilenum:integer;sprNum:integer;lastrow:byte;x,y:integer;rrbIndex:byte);
+var row : byte;
+	yoffset : byte;
+	sprAddr : integer;
+	sprRow : integer;
+begin
+	row := rrbRowLookUp[y];
+	yoffset := rrbModLookUp[y];
+	sprRow := rrbSprRowLookUp[rrbIndex];
+	
+	// clear sprite last position = lastrow
+	sprAddr := scrMemRowLookUp[lastrow]  + sprRow + 2;
+	DMA::poke16($0000+screenMapBank,sprAddr,transparentTile);
+	// next line	
+	sprAddr := scrMemRowLookUp[lastrow+1] + sprRow + 2;
+	DMA::poke16($0000+screenMapBank,sprAddr,transparentTile);
+	
+	
+	// copy Sprite Data to SpriteTile with offset
+	copySpriteTileOffset(sprNum,yoffset);
+	
+	// Draw at new position
+	
+	// lookup RRB position of sprite	- ScreenMemory
+	sprAddr := scrMemRowLookUp[row] + sprRow;
+	// Insert new X Position
+	DMA::poke16($0000+screenMapBank,sprAddr,x);
+	
+	// next Line also
+	sprAddr := sprAddr + mega65::LogicalRowSize;
+	// Insert new X Position
+	DMA::poke16($0000+screenMapBank,sprAddr,x);
+	
+	// lookup the RRB Address for Sprite Tile
+	sprAddr := scrMemRowLookUp[row] + sprRow + 2;
+	// Insert new SpriteTile
+	DMA::poke16($0000+screenMapBank,sprAddr,tilenum);
+	// next line also
+	sprAddr := sprAddr + mega65::LogicalRowSize;
+	DMA::poke16($0000+screenMapBank,sprAddr,(tilenum+1));
+end;
+/******************************************************************** 
+	AddSpriteLayer 
+ ******************************************************************** 
+	Adds a Sprite Layer with n Sprites per Row
+
+	n		 		- number of Sprites
+	sprDBank			- Bank of Sprite Memory
+	sprDAddr			- Startaddress of Sprite Memory
+ ********************************************************************/	
+
+procedure addSpriteLayer(n : byte;sprDBank : byte;sprDAddr : integer);
+begin
+	sprDataBank := sprDBank;
+	sprDataAddress := sprDAddr;
+	if (maxSpritesPerRow+n < MAXSPRITE) then
+	begin
+		maxSpritesPerRow := maxSpritesPerRow + n;
+	end	else
+	begin
+		maxSpritesPerRow := MAXSPRITE;
+	end;
+end;
+
+/******************************************************************** 
+	addTileLayer
+ ******************************************************************** 
+	madrBank 			- Bank of Screen Buffer
+	mapAddress 		- StartAddress of Screen Buffer
+	mapWidth			- Width of the Screen Buffer
+
+	TileBase is currently fixed at [2048] - $20000
+ ********************************************************************/	
+
+procedure addTileLayer(madrBank : byte;mapAddress : integer; mapWidth : integer;);
+begin
+	tileLayerAddr := mapAddress;
+	tileLayerBank := madrBank;
+	tileLayerWidth := mapWidth;
+end;
+
+
+/******************************************************************** 
+	UpdateRRB
+	Update the Raster Rewrite Buffer
+ ******************************************************************** 
+
+ ********************************************************************/	
+procedure UpdateRRB();
+begin
+	DMA::lcopy($00,colorMapBank,colorMapAddress,$ff,$08,$0000,screenSize);
+	DMA::lcopy($00,screenMapBank,screenMapAddress,$00,$05,$0000,screenSize);
+end;
+
+/******************************************************************** 
+	CreateRRB
+	Calculates the Raster Rewrite Buffer
+ ******************************************************************** 
+	scrMBank			- Bank of Screen Buffer
+	scrMAddr			- Startaddress of Screen Buffer
+	clrMBank			- Bank of Color Buffer
+	clrMAddr			- Startaddress of Color Buffer
+ ********************************************************************/	
+procedure CreateRRB(scrMBank:byte;scrMAddr:integer;clrMBank:byte;clrMAddr:integer);
+var row : byte;
+	tx : byte;
+	taddr : integer;
+	addr : integer;
+	caddr : integer;
+	staddr : integer;
+	rrbSize : integer;
+begin
+	screenMapBank := scrMBank;
+	screenMapAddress := scrMAddr;
+	colorMapBank := clrMBank;
+	colorMapAddress := clrMAddr;
+	
+	// Calc lookup tables
+	for tx := 0 to 200 do
+	begin
+		rrbModLookUp[tx] := myMod(tx,8);
+		rrbRowLookUp[tx] := tx / 8;
+	end;
+	
+	for tx := 0 to MAXSPRITE+1 do
+	begin
+		rrbSprRowLookUp[tx] := tx*4;
+	end;
+	
+	for tx := 0 to 8 do
+	begin
+		rrbOffsetLookUp[tx] := tx*8;
+	end;
+	
+	if (maxSpritesPerRow > 0) then
+	begin
+		row := 40 + ((maxSpritesPerRow+1)* 2) + 2;
+		mega65::SetRowSize(row);
+	end else
+	begin
+		mega65::SetRowSize(40);
+	end;
+	
+	taddr := $0000;
+	addr := $0000;
+	staddr := $0000;			
+	
+
+	// Background - Tilelayer 
+	for row := 0 to 25 do
+	begin
+		taddr := tileLayerAddr + row * tileLayerWidth * 2;
+		
+		addr := screenMapAddress + staddr;
+		caddr := colorMapAddress + staddr;
+		staddr := staddr + mega65::LogicalRowSize;
+				
+		for tx := 0 to tileLayerWidth do
+		begin	
+			// copy 2 bytes from tilemap address to screen addresstable(,,);
+			DMA::lcopy($00,tileLayerBank,taddr,$00,screenMapBank,addr,$0002);
+			// advance addresses (2 byte for fcm)
+			taddr := taddr + 2;
+			addr := addr + 2;
+			caddr := caddr + 2;
+			
+		end;
+
+		scrMemRowLookUp[row] := addr;
+		
+		if (maxSpritesPerRow>0) then
+		begin
+			for tx := 0 to maxSpritesPerRow do
+			begin
+				DMA::lpoke($00,colorMapBank,caddr,DMA::loByte($90));	// GOTOX+TRANSPARENT
+				DMA::lpoke($00,colorMapBank,caddr+1,DMA::hiByte($90));	// GOTOX+TRANSPARENT
+				DMA::lpoke($00,screenMapBank,addr,$00);	// position
+				DMA::lpoke($00,screenMapBank,addr+1,$00);	// position
+				// advance addresses (2 byte for fcm)
+				caddr := caddr + 2;
+				addr := addr + 2;	
+				DMA::lpoke($00,colorMapBank,caddr,$00);
+				DMA::lpoke($00,colorMapBank,caddr+1,$00);
+				DMA::lpoke($00,screenMapBank,addr,DMA::loByte(transparentTile));	// transparentes sprite
+				DMA::lpoke($00,screenMapBank,addr+1,DMA::hiByte(transparentTile));	// transparentes sprite
+				caddr := caddr + 2;
+				addr := addr + 2;	
+			end;
+			DMA::lpoke($00,colorMapBank,caddr,DMA::loByte($10));		// GotoX
+			DMA::lpoke($00,colorMapBank,caddr+1,DMA::hiByte($10));
+				
+			DMA::lpoke($00,screenMapBank,addr,DMA::loByte($140));	// GotoX - 320
+			DMA::lpoke($00,screenMapBank,addr+1,DMA::hiByte($140));	// GotoX - 320
+			
+			caddr := caddr + 2;
+			addr := addr + 2;	
+
+			// End char
+			DMA::lpoke($00,colorMapBank,caddr,$00);
+			DMA::lpoke($00,colorMapBank,caddr+1,$00);
+				
+			DMA::lpoke($00,screenMapBank,addr,$00);	
+			DMA::lpoke($00,screenMapBank,addr+1,$00);
+		end;
+	end;
+	rrbSize := 80 + (maxSpritesPerRow+1)*4+4;	// line size
+	screenSize := rrbSize*25;
+	
+	DMA::lcopy($00,colorMapBank,colorMapAddress,$ff,$08,$0000,screenSize);
+	DMA::lcopy($00,screenMapBank,screenMapAddress,$00,$05,$0000,screenSize);
+end;
+	
 end.

@@ -1,0 +1,15 @@
+unit sprites;
+
+var TSprite = class
+		x : integer;
+		y : integer;
+		lastRow : byte;
+		tilenum : integer;	
+		rrbIndex : byte;
+	end;
+
+
+
+
+
+end.

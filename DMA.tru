@@ -1,5 +1,6 @@
 unit DMA;
-
+ @use "memory"
+ 
 var p : pointer;
 
 	// Index constants for dmalist
@@ -22,7 +23,7 @@ var p : pointer;
 
 	dmalist  : array[20] of byte;
 	
-// Helper functions, don't know if TRSE has something build in.. couldnt find it :)
+// Helper functions, I had problems with hi and lo
 function hiByte(val1 : integer) : byte;
 begin
 	hiByte := (val1 >> 8);
@@ -33,6 +34,27 @@ begin
 	loByte := (val2 & $ff);
 end;
 
+/******************************************************************** 
+	poke16
+	Pokes an integer at position pa,pb
+ ******************************************************************** 
+	pa				- Hi Word of Address
+	pb				- Lo Word of Address
+	val				- Value to poke
+ ********************************************************************/	
+procedure poke16(pa,pb : integer;val:integer) ;
+begin
+	//       pa   pb
+	//     zphi zplo
+	//     xxxx xxxx
+	// bsp$0FF8 0000	- color ram
+	Memory::zpLo := pb;  
+	Memory::zpHi := pa; // 32 bit addressing through pointers
+	Memory::Poke32(0,loByte(val));
+	Memory::Poke32(1,hiByte(val));
+end;
+
+
 // Start the DMA process... don't call unless you populatet the dmalist array
 procedure do_dma();
 begin
@@ -42,7 +64,15 @@ begin
 	POKE(^$D705,0,loByte(#dmalist));
 end;
 
-// peeks a value at address [mb][b][addr]
+/******************************************************************** 
+	lpeek
+	gets a byte from anywhere in the 256MB range
+ ******************************************************************** 
+	mb				- Megabyte
+	b				- Bank
+	addr				- address word
+ ********************************************************************/
+
 function lpeek(mb:byte;b:byte;addr : integer) : byte;
 var dma_byte : byte;
 begin
@@ -55,8 +85,8 @@ begin
 	dmalist[sub_cmd] := $00;
 	dmalist[command] := $00;
 	
-	dmalist[count] := 1;
-	dmalist[count+1] := 0;
+	dmalist[count] := 0;
+	dmalist[count+1] := 1;
 	
 	dmalist[source_mb] := mb;
 	dmalist[source_bank] := b;
@@ -74,8 +104,17 @@ begin
 	lpeek:=dma_byte;
 end;
 
-// peeks a value to address [mb][b][addr]
-procedure lpoke(mb1:byte;b1:byte;addr1:integer;value:byte);
+/******************************************************************** 
+	lpoke
+	pokes a byte into anywhere in the 256MB range
+ ******************************************************************** 
+	mb1				- Megabyte
+	b1				- Bank
+	addr1			- address word
+	value 			- value to poke
+ ********************************************************************/
+
+procedure lpoke(mb1:byte;b1:byte;addr1:integer;value:byte) ;
 var dma_byte1 : byte;
 begin
 	dmalist[option_0b] := $0b;
@@ -108,8 +147,21 @@ begin
 	do_dma();
 end;
 
-// copy count1 bytes from [smb][sb][saddr] to [dmb][db][daddr]
-procedure lcopy(smb:byte;sb:byte;saddr:integer;dmb:byte;db:byte;daddr:integer;count1:integer);
+
+/******************************************************************** 
+	lcopy
+	DMA job to copy count1 bytes from [smb][sb][saddr] to 
+	[dmb][db][daddr]
+ ******************************************************************** 
+	smb				- Source Megabyte
+	sb				- Source Bank
+	saddr			- Source address word
+	dmb				- Destination Megabyte
+	db				- Destination Bank
+	daddr			- Destination Address
+	count1			- how many bytes to copy
+ ********************************************************************/
+procedure lcopy(smb:byte;sb:byte;saddr:integer;dmb:byte;db:byte;daddr:integer;count1:integer) ;
 begin
 	dmalist[option_0b] := $0b;
 	dmalist[option_80] := $80;
@@ -136,8 +188,18 @@ begin
 	do_dma();
 end;
 
-// fill count2 bytes at address [dmb1][db1][daddr1]
-procedure lfill(dmb1:byte;db1:byte;daddr1:integer;value1:byte;count2:integer);
+
+/******************************************************************** 
+	lfill
+	DMA job to fill count2 bytes to [dmb1][db1][daddr1]
+ ******************************************************************** 
+	dmb1				- Destination Megabyte
+	db1				- Destination Bank
+	daddr1			- Destination Address
+	value1			- fill with this value
+	count2			- how many bytes to fill
+ ********************************************************************/
+procedure lfill(dmb1:byte;db1:byte;daddr1:integer;value1:byte;count2:integer) ;
 begin
 	dmalist[option_0b] := $0b;
 	dmalist[option_80] := $80;
